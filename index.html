@@ -103,6 +103,7 @@
       color: var(--muted);
       margin-top: 10px;
       min-height: 20px;
+      white-space: pre-line;
     }
 
     .hidden { display: none; }
@@ -150,6 +151,61 @@
       { name: "video", weight: 20 }
     ];
 
+    const dificuldadeFlashcards = [
+      { name: "Fácil", weight: 60 },
+      { name: "Média", weight: 20 },
+      { name: "Difícil", weight: 20 }
+    ];
+
+    const miniConteudosAnatomiaFacil1Min = [
+      "O sistema circulatório funciona como uma rede fechada de transporte. O coração bombeia o sangue, os vasos conduzem e o sangue leva oxigênio, nutrientes, hormônios e células de defesa para os tecidos, além de remover resíduos.",
+      "A digestão começa na boca. Os dentes trituram o alimento, a saliva umedece e inicia a digestão química, e a língua organiza o bolo alimentar para a deglutição.",
+      "O sistema respiratório não apenas leva ar aos pulmões: ele filtra, aquece e umedece o ar, participa da troca de gases, ajuda no controle do pH e contribui para o olfato e a voz.",
+      "Os rins filtram o sangue, reabsorvem substâncias úteis e eliminam resíduos na urina. Também regulam pH, eletrólitos e volume sanguíneo, sendo essenciais para a homeostase.",
+      "O esqueleto axial é o eixo do corpo e inclui crânio, coluna vertebral, costelas, esterno e hioide. Sua função principal é sustentar e proteger estruturas vitais.",
+      "Músculo é um órgão ativo: contrai para gerar movimento, estabiliza posições e ajuda na produção de calor. O movimento corporal depende da integração entre músculos, ossos, articulações e sistema nervoso.",
+      "O osso é um tecido vivo, vascularizado e em constante remodelação. Além de sustentar, participa da proteção, da reserva mineral e da produção de células sanguíneas.",
+      "O sistema genital feminino produz gametas, secreta hormônios, permite fecundação e gestação e participa do parto e da amamentação.",
+      "As articulações unem ossos e podem ser imóveis, semimóveis ou móveis. As articulações sinoviais têm maior mobilidade por possuírem cavidade articular e líquido sinovial."
+    ];
+
+    const flashcardsAnatomia = {
+      "Fácil": [
+        { frente: "Qual é a função geral do sistema circulatório?", verso: "Transportar sangue, oxigênio, nutrientes, hormônios, células de defesa e resíduos pelo corpo." },
+        { frente: "Artéria sempre carrega sangue oxigenado?", verso: "Não. Artéria é o vaso que sai do coração, mesmo quando transporta sangue pobre em oxigênio." },
+        { frente: "Onde ocorre a principal troca entre sangue e tecidos?", verso: "Nos capilares, por causa de suas paredes muito finas." },
+        { frente: "Onde começa a digestão?", verso: "Na boca, com mastigação, saliva e início da digestão química." },
+        { frente: "Quais são as principais glândulas salivares?", verso: "Parótida, submandibular e sublingual." },
+        { frente: "Quais são as divisões da faringe?", verso: "Nasofaringe, orofaringe e laringofaringe." },
+        { frente: "Qual é a função principal dos rins?", verso: "Filtrar o sangue, reabsorver substâncias úteis e eliminar resíduos pela urina." },
+        { frente: "O que é o néfron?", verso: "É a unidade funcional do rim, responsável por filtrar e ajustar o filtrado." },
+        { frente: "O que forma o esqueleto axial?", verso: "Crânio, coluna vertebral, hioide, costelas e esterno." },
+        { frente: "Quais são as regiões da coluna vertebral?", verso: "Cervical, torácica, lombar, sacral e coccígea." },
+        { frente: "O que é um músculo?", verso: "Um órgão ativo capaz de contrair e produzir movimento." },
+        { frente: "Quais são as propriedades musculares?", verso: "Excitabilidade, condutividade, contratilidade, extensibilidade e elasticidade." },
+        { frente: "Osso é tecido vivo?", verso: "Sim. Ele tem irrigação sanguínea, responde a estímulos e pode se regenerar." },
+        { frente: "O que é o periósteo?", verso: "É a membrana que reveste externamente o osso." },
+        { frente: "Quais são funções do sistema genital feminino?", verso: "Produzir gametas, permitir fecundação, gestação, parto e amamentação." },
+        { frente: "Onde geralmente ocorre a fecundação?", verso: "Na ampola da tuba uterina." },
+        { frente: "O que é uma articulação?", verso: "É a união entre ossos, com maior ou menor grau de movimento." },
+        { frente: "Qual é a função dos ligamentos?", verso: "Unir ossos e limitar movimentos excessivos." }
+      ],
+      "Média": [
+        { frente: "O que diferencia a circulação portal da circulação sistêmica comum?", verso: "Ela passa por dois leitos capilares antes de retornar ao coração, como no trajeto intestino-fígado." },
+        { frente: "Por que a deglutição é um mecanismo de proteção?", verso: "Porque coordena estruturas como epiglote e palato para evitar entrada de alimento na via aérea." },
+        { frente: "Quais substâncias endócrinas renais têm destaque clínico?", verso: "Renina, relacionada à pressão arterial, e eritropoetina, ligada à produção de hemácias." },
+        { frente: "Por que unidades motoras pequenas permitem maior precisão?", verso: "Porque cada neurônio inerva menos fibras, refinando o controle do movimento." },
+        { frente: "Quais estruturas compõem uma articulação sinovial?", verso: "Cavidade articular, cápsula, membrana sinovial, líquido sinovial e cartilagem." }
+      ],
+      "Difícil": [
+        { frente: "Explique, de forma integrada, como parede vascular e pressão se relacionam entre artérias, veias e capilares.", verso: "Artérias têm paredes espessas para suportar alta pressão; veias operam em baixa pressão e contam com válvulas; capilares possuem parede muito fina para permitir trocas." },
+        { frente: "Resuma a formação da urina destacando etapas e locais funcionais.", verso: "A urina resulta de filtração glomerular seguida de reabsorção e secreção tubular no néfron." },
+        { frente: "Relacione fibras tipo I e IIB ao desempenho físico.", verso: "Tipo I: contração lenta e alta resistência à fadiga; tipo IIB: alta potência, metabolismo predominantemente anaeróbico e fadiga rápida." },
+        { frente: "Compare sinartrose, anfiartrose e diartrose em termos de mobilidade e tecido predominante.", verso: "Sinartrose é imóvel e geralmente fibrosa; anfiartrose é semimóvel e geralmente cartilaginosa; diartrose é móvel e geralmente sinovial." },
+        { frente: "Descreva a relevância anatômica do sacro na transmissão de cargas.", verso: "O sacro, formado por vértebras fundidas, transfere o peso do tronco para a pelve e membros inferiores, contribuindo para estabilidade pélvica." }
+      ]
+    };
+
     const placeholders = {
       flashcards: {
         title: "Flash-card rápido",
@@ -173,6 +229,7 @@
     };
 
     let activeChallenge = null;
+    let flashSession = null;
 
     const homeScreen = document.getElementById("homeScreen");
     const challengeScreen = document.getElementById("challengeScreen");
@@ -190,6 +247,139 @@
         if (roll <= 0) return item.name;
       }
       return list[list.length - 1].name;
+    }
+
+    function pickRandom(list) {
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function buildChallenge(minutes) {
+      const subject = weightedPick(subjects);
+      const contentType = weightedPick(types);
+      const base = placeholders[contentType];
+
+      const challenge = {
+        subject,
+        contentType,
+        minutes,
+        title: base.title,
+        prompt: base.prompt
+          .replace(/{{materia}}/g, subject)
+          .replace(/{{tempo}}/g, `${minutes} min`),
+        choices: base.choices || null,
+        correctIndex: base.correctIndex ?? null,
+        cards: base.cards || null,
+        difficulty: null,
+        deck: null,
+      };
+
+      if (subject === "Anatomia" && contentType === "texto" && minutes === 1) {
+        challenge.title = "Mini conteúdo de anatomia — leitura rápida";
+        challenge.prompt = pickRandom(miniConteudosAnatomiaFacil1Min);
+      }
+
+      if (subject === "Anatomia" && contentType === "flashcards") {
+        const difficulty = weightedPick(dificuldadeFlashcards);
+        challenge.difficulty = difficulty;
+        challenge.title = `Flashcards de Anatomia (${difficulty})`;
+
+        const deck = flashcardsAnatomia[difficulty];
+        challenge.deck = deck;
+        challenge.cards = Math.min(3, deck.length);
+        challenge.prompt = "Estude um flashcard por vez. Primeiro veja a frente e depois revele a resposta.";
+      }
+
+      return challenge;
+    }
+
+    function renderFlashcard() {
+      if (!activeChallenge || !flashSession) return;
+      const { deck, index, showingBack, total } = flashSession;
+      const current = deck[index];
+      if (!current) return;
+
+      challengeChoices.innerHTML = "";
+      challengeResult.textContent = `Card ${index + 1} de ${total}`;
+
+      if (!showingBack) {
+        challengePrompt.textContent = current.frente;
+        const revealBtn = document.createElement("button");
+        revealBtn.className = "choice";
+        revealBtn.textContent = "Mostrar resposta";
+        revealBtn.onclick = () => {
+          flashSession.showingBack = true;
+          renderFlashcard();
+        };
+        challengeChoices.appendChild(revealBtn);
+        return;
+      }
+
+      challengePrompt.textContent = current.verso;
+      const nextBtn = document.createElement("button");
+      nextBtn.className = "choice";
+
+      const isLast = index >= total - 1;
+      nextBtn.textContent = isLast ? "Concluir flashcards" : "Próximo flashcard";
+      nextBtn.onclick = () => {
+        if (isLast) {
+          answerQuestion(true);
+          flashSession = null;
+          return;
+        }
+        flashSession.index += 1;
+        flashSession.showingBack = false;
+        renderFlashcard();
+      };
+      challengeChoices.appendChild(nextBtn);
+    }
+
+    function showChallenge(minutes) {
+      activeChallenge = buildChallenge(minutes);
+      flashSession = null;
+      homeScreen.classList.add("hidden");
+      challengeScreen.classList.remove("hidden");
+      challengeResult.textContent = "";
+
+      const difficultyTag = activeChallenge.difficulty ? ` • ${activeChallenge.difficulty}` : "";
+      challengeMeta.textContent = `${activeChallenge.subject} • ${activeChallenge.contentType}${difficultyTag} • ${activeChallenge.minutes} min`;
+      challengePrompt.textContent = activeChallenge.prompt;
+      challengeChoices.innerHTML = "";
+
+      if (activeChallenge.cards) {
+        const deck = (activeChallenge.deck || []).slice();
+        if (!deck.length) {
+          challengeResult.textContent = "Sem flashcards disponíveis.";
+          return;
+        }
+
+        const randomizedDeck = deck.sort(() => Math.random() - 0.5).slice(0, activeChallenge.cards);
+        flashSession = {
+          deck: randomizedDeck,
+          total: randomizedDeck.length,
+          index: 0,
+          showingBack: false,
+        };
+        renderFlashcard();
+        return;
+      }
+
+      if (activeChallenge.choices) {
+        activeChallenge.choices.forEach((choice, index) => {
+          const btn = document.createElement("button");
+          btn.className = "choice";
+          btn.textContent = choice;
+          btn.onclick = () => answerQuestion(index === activeChallenge.correctIndex);
+          challengeChoices.appendChild(btn);
+        });
+      }
+
+      if (!activeChallenge.cards && !activeChallenge.choices) {
+        const doneBtn = document.createElement("button");
+        doneBtn.className = "choice";
+        doneBtn.textContent = "Concluir";
+        doneBtn.onclick = () => answerQuestion(true);
+        challengeChoices.appendChild(doneBtn);
+      }
     }
 
     function readEvents() {
@@ -218,64 +408,6 @@
       accuracyEl.textContent = `${calculateDailyAccuracy()}%`;
     }
 
-    function buildChallenge(minutes) {
-      const subject = weightedPick(subjects);
-      const contentType = weightedPick(types);
-      const base = placeholders[contentType];
-      return {
-        subject,
-        contentType,
-        minutes,
-        title: base.title,
-        prompt: base.prompt
-          .replace(/{{materia}}/g, subject)
-          .replace(/{{tempo}}/g, `${minutes} min`),
-        choices: base.choices || null,
-        correctIndex: base.correctIndex ?? null,
-        cards: base.cards || null,
-      };
-    }
-
-    function showChallenge(minutes) {
-      activeChallenge = buildChallenge(minutes);
-      homeScreen.classList.add("hidden");
-      challengeScreen.classList.remove("hidden");
-      challengeResult.textContent = "";
-      challengeMeta.textContent = `${activeChallenge.subject} • ${activeChallenge.contentType} • ${activeChallenge.minutes} min`;
-      challengePrompt.textContent = activeChallenge.prompt;
-      challengeChoices.innerHTML = "";
-
-      if (activeChallenge.cards) {
-        for (let i = 1; i <= activeChallenge.cards; i++) {
-          const card = document.createElement("button");
-          card.className = "choice";
-          card.textContent = `Flash-card ${i} de ${activeChallenge.cards}`;
-          card.onclick = () => {
-            challengeResult.textContent = `Flash-card ${i} aberto.`;
-          };
-          challengeChoices.appendChild(card);
-        }
-      }
-
-      if (activeChallenge.choices) {
-        activeChallenge.choices.forEach((choice, index) => {
-          const btn = document.createElement("button");
-          btn.className = "choice";
-          btn.textContent = choice;
-          btn.onclick = () => answerQuestion(index === activeChallenge.correctIndex);
-          challengeChoices.appendChild(btn);
-        });
-      }
-
-      if (!activeChallenge.cards && !activeChallenge.choices) {
-        const doneBtn = document.createElement("button");
-        doneBtn.className = "choice";
-        doneBtn.textContent = "Concluir";
-        doneBtn.onclick = () => answerQuestion(true);
-        challengeChoices.appendChild(doneBtn);
-      }
-    }
-
     function record(result) {
       if (!activeChallenge) return;
       saveEvent({
@@ -284,6 +416,7 @@
         subject: activeChallenge.subject,
         type: activeChallenge.contentType,
         chosenTime: activeChallenge.minutes,
+        difficulty: activeChallenge.difficulty,
         viewedContent: activeChallenge.title,
         result,
       });
@@ -305,6 +438,7 @@
       challengeScreen.classList.add("hidden");
       homeScreen.classList.remove("hidden");
       activeChallenge = null;
+      flashSession = null;
     };
 
     renderAccuracy();
