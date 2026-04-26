@@ -1,1 +1,313 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hiperfoco</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #161616;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+    }
 
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 560px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 24px;
+      background: #fff;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 650;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+
+    .subtle {
+      color: var(--muted);
+      margin: 8px 0 20px;
+      font-size: 0.95rem;
+    }
+
+    .daily {
+      font-size: 2rem;
+      margin: 10px 0 20px;
+      font-weight: 700;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      padding: 12px 14px;
+      font-size: 1rem;
+      font-weight: 550;
+      cursor: pointer;
+    }
+
+    button:hover { background: #f9fafb; }
+
+    .section {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .meta {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .prompt {
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      white-space: pre-line;
+    }
+
+    .choice {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 8px;
+      font-weight: 450;
+    }
+
+    .result {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-top: 10px;
+      min-height: 20px;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section id="homeScreen">
+      <h1 class="title">Hiperfoco em Medicina</h1>
+      <p class="subtle">Ativador mental rápido. Sem metas, sem cobrança.</p>
+      <div class="subtle">Acertos do dia</div>
+      <div id="dailyAccuracy" class="daily">0%</div>
+      <div class="stack">
+        <button id="btn1">1 min</button>
+        <button id="btn2">2 min</button>
+      </div>
+    </section>
+
+    <section id="challengeScreen" class="hidden section">
+      <div id="challengeMeta" class="meta"></div>
+      <div id="challengePrompt" class="prompt"></div>
+      <div id="challengeChoices"></div>
+      <div class="stack">
+        <button id="btnSkip">Ignorar</button>
+        <button id="btnBack">Voltar</button>
+      </div>
+      <div id="challengeResult" class="result"></div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "hiperfoco-events";
+    const DAY_KEY = () => new Date().toISOString().slice(0, 10);
+
+    const subjects = [
+      { name: "Anatomia", weight: 55 },
+      { name: "CHG", weight: 25 },
+      { name: "Medicina comum", weight: 20 }
+    ];
+
+    const types = [
+      { name: "flashcards", weight: 40 },
+      { name: "questao", weight: 20 },
+      { name: "texto", weight: 20 },
+      { name: "video", weight: 20 }
+    ];
+
+    const placeholders = {
+      flashcards: {
+        title: "Flash-card rápido",
+        prompt: "Flash-card 1/3\nTema: {{materia}}\n\n(Conteúdo será preenchido depois)",
+        cards: 3
+      },
+      questao: {
+        title: "Questão estilo House",
+        prompt: "Paciente com dor torácica súbita e dispneia. Qual hipótese diagnóstica inicial é mais provável?",
+        choices: ["TEP", "Asma leve", "Dengue", "Labirintite"],
+        correctIndex: 0
+      },
+      texto: {
+        title: "Texto curto",
+        prompt: "Resumo de {{tempo}} de {{materia}}.\n\n(Conteúdo será preenchido depois)"
+      },
+      video: {
+        title: "Vídeo curto",
+        prompt: "Vídeo sugerido (30s–2min) sobre {{materia}}.\n\n(Link do YouTube será adicionado no banco depois)."
+      }
+    };
+
+    let activeChallenge = null;
+
+    const homeScreen = document.getElementById("homeScreen");
+    const challengeScreen = document.getElementById("challengeScreen");
+    const accuracyEl = document.getElementById("dailyAccuracy");
+    const challengeMeta = document.getElementById("challengeMeta");
+    const challengePrompt = document.getElementById("challengePrompt");
+    const challengeChoices = document.getElementById("challengeChoices");
+    const challengeResult = document.getElementById("challengeResult");
+
+    function weightedPick(list) {
+      const total = list.reduce((sum, item) => sum + item.weight, 0);
+      let roll = Math.random() * total;
+      for (const item of list) {
+        roll -= item.weight;
+        if (roll <= 0) return item.name;
+      }
+      return list[list.length - 1].name;
+    }
+
+    function readEvents() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function saveEvent(event) {
+      const events = readEvents();
+      events.push(event);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+    }
+
+    function calculateDailyAccuracy() {
+      const day = DAY_KEY();
+      const events = readEvents().filter((e) => e.day === day && e.result !== "ignored");
+      if (!events.length) return 0;
+      const hits = events.filter((e) => e.result === "correct").length;
+      return Math.round((hits / events.length) * 100);
+    }
+
+    function renderAccuracy() {
+      accuracyEl.textContent = `${calculateDailyAccuracy()}%`;
+    }
+
+    function buildChallenge(minutes) {
+      const subject = weightedPick(subjects);
+      const contentType = weightedPick(types);
+      const base = placeholders[contentType];
+      return {
+        subject,
+        contentType,
+        minutes,
+        title: base.title,
+        prompt: base.prompt
+          .replace(/{{materia}}/g, subject)
+          .replace(/{{tempo}}/g, `${minutes} min`),
+        choices: base.choices || null,
+        correctIndex: base.correctIndex ?? null,
+        cards: base.cards || null,
+      };
+    }
+
+    function showChallenge(minutes) {
+      activeChallenge = buildChallenge(minutes);
+      homeScreen.classList.add("hidden");
+      challengeScreen.classList.remove("hidden");
+      challengeResult.textContent = "";
+      challengeMeta.textContent = `${activeChallenge.subject} • ${activeChallenge.contentType} • ${activeChallenge.minutes} min`;
+      challengePrompt.textContent = activeChallenge.prompt;
+      challengeChoices.innerHTML = "";
+
+      if (activeChallenge.cards) {
+        for (let i = 1; i <= activeChallenge.cards; i++) {
+          const card = document.createElement("button");
+          card.className = "choice";
+          card.textContent = `Flash-card ${i} de ${activeChallenge.cards}`;
+          card.onclick = () => {
+            challengeResult.textContent = `Flash-card ${i} aberto.`;
+          };
+          challengeChoices.appendChild(card);
+        }
+      }
+
+      if (activeChallenge.choices) {
+        activeChallenge.choices.forEach((choice, index) => {
+          const btn = document.createElement("button");
+          btn.className = "choice";
+          btn.textContent = choice;
+          btn.onclick = () => answerQuestion(index === activeChallenge.correctIndex);
+          challengeChoices.appendChild(btn);
+        });
+      }
+
+      if (!activeChallenge.cards && !activeChallenge.choices) {
+        const doneBtn = document.createElement("button");
+        doneBtn.className = "choice";
+        doneBtn.textContent = "Concluir";
+        doneBtn.onclick = () => answerQuestion(true);
+        challengeChoices.appendChild(doneBtn);
+      }
+    }
+
+    function record(result) {
+      if (!activeChallenge) return;
+      saveEvent({
+        day: DAY_KEY(),
+        seenAt: new Date().toISOString(),
+        subject: activeChallenge.subject,
+        type: activeChallenge.contentType,
+        chosenTime: activeChallenge.minutes,
+        viewedContent: activeChallenge.title,
+        result,
+      });
+      renderAccuracy();
+    }
+
+    function answerQuestion(correct) {
+      record(correct ? "correct" : "wrong");
+      challengeResult.textContent = correct ? "Resposta registrada como acerto." : "Resposta registrada como erro.";
+    }
+
+    document.getElementById("btn1").onclick = () => showChallenge(1);
+    document.getElementById("btn2").onclick = () => showChallenge(2);
+    document.getElementById("btnSkip").onclick = () => {
+      record("ignored");
+      challengeResult.textContent = "Desafio ignorado.";
+    };
+    document.getElementById("btnBack").onclick = () => {
+      challengeScreen.classList.add("hidden");
+      homeScreen.classList.remove("hidden");
+      activeChallenge = null;
+    };
+
+    renderAccuracy();
+  </script>
+</body>
+</html>
