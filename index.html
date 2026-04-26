@@ -278,15 +278,26 @@
         challenge.prompt = pickRandom(miniConteudosAnatomiaFacil1Min);
       }
 
-      if (subject === "Anatomia" && contentType === "flashcards") {
-        const difficulty = weightedPick(dificuldadeFlashcards);
-        challenge.difficulty = difficulty;
-        challenge.title = `Flashcards de Anatomia (${difficulty})`;
-
-        const deck = flashcardsAnatomia[difficulty];
-        challenge.deck = deck;
-        challenge.cards = Math.min(3, deck.length);
+      if (contentType === "flashcards") {
         challenge.prompt = "Estude um flashcard por vez. Primeiro veja a frente e depois revele a resposta.";
+
+        if (subject === "Anatomia") {
+          const difficulty = weightedPick(dificuldadeFlashcards);
+          challenge.difficulty = difficulty;
+          challenge.title = `Flashcards de Anatomia (${difficulty})`;
+
+          const deck = flashcardsAnatomia[difficulty] || [];
+          challenge.deck = deck;
+          challenge.cards = Math.min(3, deck.length);
+        } else {
+          const totalCards = challenge.cards || 3;
+          challenge.title = `Flashcards rápidos de ${subject}`;
+          challenge.deck = Array.from({ length: totalCards }, (_, index) => ({
+            frente: `Flashcard ${index + 1}/${totalCards} — ${subject}`,
+            verso: "Conteúdo em preparo para esta matéria. Use este card como revisão livre de um conceito-chave.",
+          }));
+          challenge.cards = challenge.deck.length;
+        }
       }
 
       return challenge;
