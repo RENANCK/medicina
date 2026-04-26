@@ -54,6 +54,32 @@
       font-weight: 700;
     }
 
+    .progressWrap {
+      margin: 4px 0 18px;
+    }
+
+    .progressMeta {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .progressBar {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .progressFill {
+      height: 100%;
+      width: 0%;
+      background: #111827;
+      transition: width 180ms ease;
+    }
+
     .stack {
       display: grid;
       gap: 12px;
@@ -116,6 +142,12 @@
       <p class="subtle">Ativador mental rápido. Sem metas, sem cobrança.</p>
       <div class="subtle">Acertos do dia</div>
       <div id="dailyAccuracy" class="daily">0%</div>
+      <div class="progressWrap">
+        <div id="dailyProgressMeta" class="progressMeta">Progressão do dia: 0/8</div>
+        <div class="progressBar">
+          <div id="dailyProgressFill" class="progressFill"></div>
+        </div>
+      </div>
       <div class="stack">
         <button id="btn1">1 min</button>
         <button id="btn2">2 min</button>
@@ -302,6 +334,9 @@
     const challengePrompt = document.getElementById("challengePrompt");
     const challengeChoices = document.getElementById("challengeChoices");
     const challengeResult = document.getElementById("challengeResult");
+    const progressMetaEl = document.getElementById("dailyProgressMeta");
+    const progressFillEl = document.getElementById("dailyProgressFill");
+    const DAILY_PROGRESS_TARGET = 8;
 
     function weightedPick(list) {
       const total = list.reduce((sum, item) => sum + item.weight, 0);
@@ -315,6 +350,15 @@
 
     function pickRandom(list) {
       return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function pickMany(list, count) {
+      const copy = [...list];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy.slice(0, count);
     }
 
     function buildChallenge(minutes) {
@@ -335,6 +379,7 @@
         cards: base.cards || null,
         difficulty: null,
         deck: null,
+        selectedCards: null,
       };
 
       if (subject === "Anatomia" && contentType === "texto" && minutes === 1) {
@@ -350,6 +395,7 @@
         const deck = flashcardsAnatomia[difficulty];
         challenge.deck = deck;
         challenge.cards = Math.min(3, deck.length);
+        challenge.selectedCards = pickMany(deck, challenge.cards);
         challenge.prompt = "Toque em um flashcard para abrir a pergunta e a resposta.";
       }
 
@@ -374,21 +420,46 @@
       challengeChoices.innerHTML = "";
 
       if (activeChallenge.cards) {
-        const deck = activeChallenge.deck || [];
+        const cards = activeChallenge.selectedCards || activeChallenge.deck || [];
+        let openedCards = 0;
+
         for (let i = 0; i < activeChallenge.cards; i++) {
+          const flash = cards[i];
           const card = document.createElement("button");
           card.className = "choice";
           card.textContent = `Flashcard ${i + 1}`;
+          card.dataset.state = "front";
+
           card.onclick = () => {
-            if (!deck.length) {
+            if (!flash) {
               challengeResult.textContent = "Flashcard aberto.";
               return;
             }
-            const flash = deck[(Math.floor(Math.random() * deck.length) + i) % deck.length];
+
+            if (card.dataset.state === "front") {
+              challengeResult.textContent = `Frente: ${flash.frente}\n\nToque novamente para ver a resposta.`;
+              card.dataset.state = "back";
+              return;
+            }
+
             challengeResult.textContent = `Frente: ${flash.frente}\nVerso: ${flash.verso}`;
+            card.disabled = true;
+            card.textContent = `Flashcard ${i + 1} ✓`;
+            openedCards += 1;
+
+            if (openedCards === activeChallenge.cards) {
+              finishFlashcardsBtn.classList.remove("hidden");
+              challengeResult.textContent += "\n\nTodos os flashcards foram vistos.";
+            }
           };
           challengeChoices.appendChild(card);
         }
+
+        const finishFlashcardsBtn = document.createElement("button");
+        finishFlashcardsBtn.className = "choice hidden";
+        finishFlashcardsBtn.textContent = "Concluir flashcards";
+        finishFlashcardsBtn.onclick = () => answerQuestion(true);
+        challengeChoices.appendChild(finishFlashcardsBtn);
       }
 
       if (activeChallenge.choices) {
@@ -434,6 +505,20 @@
 
     function renderAccuracy() {
       accuracyEl.textContent = `${calculateDailyAccuracy()}%`;
+      renderProgress();
+    }
+
+    function calculateDailyProgress() {
+      const day = DAY_KEY();
+      const completed = readEvents().filter((e) => e.day === day && e.result !== "ignored").length;
+      const percent = Math.min(100, Math.round((completed / DAILY_PROGRESS_TARGET) * 100));
+      return { completed, percent };
+    }
+
+    function renderProgress() {
+      const { completed, percent } = calculateDailyProgress();
+      progressMetaEl.textContent = `Progressão do dia: ${completed}/${DAILY_PROGRESS_TARGET}`;
+      progressFillEl.style.width = `${percent}%`;
     }
 
     function record(result) {
