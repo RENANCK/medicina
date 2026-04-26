@@ -169,6 +169,71 @@
       "As articulações unem ossos e podem ser imóveis, semimóveis ou móveis. As articulações sinoviais têm maior mobilidade por possuírem cavidade articular e líquido sinovial."
     ];
 
+    const linksAnatomiaShorts = [
+      "https://www.youtube.com/watch?v=foQqXkUlWzU",
+      "https://www.youtube.com/watch?v=8nu29oHOou0",
+      "https://www.youtube.com/watch?v=zAtoxwXzV_s",
+      "https://www.youtube.com/watch?v=acAHWFD10JQ",
+      "https://www.youtube.com/watch?v=1LsO8Cw505M",
+      "https://www.youtube.com/watch?v=2QlVWOxFu4g",
+      "https://www.youtube.com/watch?v=PzXjunPlT9Q",
+      "https://www.youtube.com/watch?v=scg1qOtx94Y",
+      "https://www.youtube.com/watch?v=pWHBQfir3zQ",
+      "https://www.youtube.com/watch?v=veJZMDxCPC0",
+      "https://www.youtube.com/watch?v=4ZemDDZpi9Y",
+      "https://www.youtube.com/watch?v=EIEMBB_kw5E",
+      "https://www.youtube.com/watch?v=NrbPlYwHUfg",
+      "https://www.youtube.com/watch?v=7_ZT2sgArrc",
+      "https://www.youtube.com/watch?v=6eDE33WkIeg",
+      "https://www.youtube.com/watch?v=AULpJFuvJrw",
+      "https://www.youtube.com/watch?v=TRhsdudKCdw",
+      "https://www.youtube.com/watch?v=XjqtNbRxLFQ",
+      "https://www.youtube.com/watch?v=8UBvLtT_VyM",
+      "https://www.youtube.com/watch?v=MixOI-wH7qc",
+      "https://www.youtube.com/watch?v=gqO2oZXQ_R0",
+      "https://www.youtube.com/watch?v=EpMXY66pow0",
+      "https://www.youtube.com/watch?v=g4jTWzqc8nw",
+      "https://www.youtube.com/watch?v=h6r7hcC5A6M",
+      "https://www.youtube.com/watch?v=BSP0WDtYysc",
+      "https://www.youtube.com/watch?v=Cxl2v7zOhjE",
+      "https://www.youtube.com/watch?v=0YJytIvOA_w",
+      "https://www.youtube.com/watch?v=W47sZquxMPg",
+      "https://www.youtube.com/watch?v=Wy_LuK7CGbg",
+      "https://www.youtube.com/watch?v=nqrV-nG1hxc",
+      "https://www.youtube.com/watch?v=UoQwP3qaMBM",
+      "https://www.youtube.com/watch?v=r6XKUy1kxkA",
+      "https://www.youtube.com/watch?v=d7uusgY3-y8",
+      "https://www.youtube.com/watch?v=Z11th6rkGQg",
+      "https://www.youtube.com/watch?v=7sX1ApXC76g",
+      "https://www.youtube.com/watch?v=em6DfQulaa8",
+      "https://www.youtube.com/watch?v=7AH_XVc2iRs",
+      "https://www.youtube.com/watch?v=ZHqdIuqVFQM",
+      "https://www.youtube.com/watch?v=zSkwXsWLbn0",
+      "https://www.youtube.com/watch?v=lmySZGrt8Gc",
+      "https://www.youtube.com/watch?v=XmvQtCvKzy4",
+      "https://www.youtube.com/watch?v=rOYAm2360FI",
+      "https://www.youtube.com/watch?v=CaPxBQmWV2I",
+      "https://www.youtube.com/watch?v=YHOhLBr6tQE",
+      "https://www.youtube.com/watch?v=3scc5P3KHrc",
+      "https://www.youtube.com/watch?v=yhOtSJAi920",
+      "https://www.youtube.com/watch?v=gFFcFCndCME",
+      "https://www.youtube.com/watch?v=CEbV0_qZPIA",
+      "https://www.youtube.com/watch?v=iKBRv9p1Ckc",
+      "https://www.youtube.com/watch?v=d1alZLFXh-A",
+      "https://www.youtube.com/watch?v=CJazXjuCq5Q",
+      "https://www.youtube.com/watch?v=P2f-ixobf3U"
+    ];
+
+    function youtubeWatchToShorts(url) {
+      try {
+        const parsed = new URL(url);
+        const videoId = parsed.searchParams.get("v");
+        return videoId ? `https://www.youtube.com/shorts/${videoId}` : url;
+      } catch {
+        return url;
+      }
+    }
+
     const flashcardsAnatomia = {
       "Fácil": [
         { frente: "Qual é a função geral do sistema circulatório?", verso: "Transportar sangue, oxigênio, nutrientes, hormônios, células de defesa e resíduos pelo corpo." },
@@ -286,6 +351,12 @@
         challenge.deck = deck;
         challenge.cards = Math.min(3, deck.length);
         challenge.prompt = "Toque em um flashcard para abrir a pergunta e a resposta.";
+      }
+
+      if (subject === "Anatomia" && contentType === "video") {
+        const shortsUrl = youtubeWatchToShorts(pickRandom(linksAnatomiaShorts));
+        challenge.title = "Vídeo curto de Anatomia (Shorts)";
+        challenge.prompt = `Vídeo sugerido (< 1 min):\n${shortsUrl}`;
       }
 
       return challenge;
