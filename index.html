@@ -227,6 +227,65 @@
       { nome: "Mini-conteúdo CHG", peso: 8 }
     ];
 
+
+    const miniConteudosAnatomia = [
+      "Sistema Esquelético – Função: dá suporte ao corpo, protege órgãos, auxilia movimento, reserva minerais e participa da hematopoiese.",
+      "Matriz Óssea: formada por parte orgânica (colágeno tipo I) e mineral (cálcio e fosfato), garantindo resistência ao osso.",
+      "Cartilagem: tecido avascular e flexível que reduz impacto articular, nutre-se por difusão e é mais abundante em crianças.",
+      "Osteoblastos: células formadoras do osso, produtoras da matriz óssea e ativas na regeneração de fraturas.",
+      "Osteócitos: células ósseas maduras na matriz, essenciais para manutenção estrutural e troca de nutrientes.",
+      "Osteoclastos: células grandes multinucleadas responsáveis pela reabsorção e remodelação óssea.",
+      "Periósteo: camada externa vascularizada e inervada, importante para crescimento e regeneração óssea.",
+      "Endósteo: reveste cavidades internas do osso, produz células ósseas e atua na remodelação.",
+      "Osso Compacto: tecido denso e resistente da camada externa dos ossos, com poucos espaços.",
+      "Osso Esponjoso: tecido leve com cavidades que abriga medula óssea e participa da hematopoiese.",
+      "Ossos Longos: maiores no comprimento, como fêmur e úmero; possuem diáfise e epífise e auxiliam o movimento.",
+      "Ossos Curtos: dimensões semelhantes e formato cúbico, como ossos do carpo, oferecendo estabilidade.",
+      "Ossos Planos: finos e largos, como crânio e esterno, com função principal de proteção.",
+      "Ossos Irregulares: ossos de formato complexo, como vértebras, com funções variadas.",
+      "Ossos Pneumáticos: possuem cavidades com ar, reduzem o peso do crânio e se relacionam aos seios paranasais.",
+      "Medula Óssea: tecido hematopoético vermelho ou amarelado dentro dos ossos, essencial à produção sanguínea.",
+      "Coluna Vertebral: formada por vértebras, protege a medula espinal, permite movimentos e divide-se em regiões.",
+      "Vértebras Cervicais: sete vértebras com forames transversos, incluindo atlas e áxis, para mobilidade do pescoço.",
+      "Vértebras Torácicas: articulam-se com costelas, possuem fóveas costais e movimento mais limitado.",
+      "Vértebras Lombares: grandes e fortes, com corpo volumoso para suporte de peso e flexão/extensão.",
+      "Sacro: conjunto de vértebras fundidas que liga coluna e pelve, essencial para sustentação.",
+      "Cóccix: porção final da coluna, pequena e triangular, sujeita à pressão ao sentar.",
+      "Esterno: osso plano central do tórax que protege órgãos vitais e articula com costelas.",
+      "Costelas: ossos curvos que protegem coração e pulmões e auxiliam a mecânica respiratória.",
+      "Articulações: uniões entre ossos que permitem movimento, podendo ser móveis ou fixas.",
+      "Articulação Sinovial: apresenta cápsula e líquido sinovial, com ampla mobilidade como no joelho.",
+      "Articulação Fibrosa: união por tecido fibroso, com pouco ou nenhum movimento, como suturas cranianas.",
+      "Articulação Cartilaginosa: união por cartilagem, com mobilidade limitada e absorção de impacto.",
+      "Músculo Esquelético: tecido estriado voluntário ligado aos ossos para movimento corporal.",
+      "Músculo Cardíaco: tecido do coração com contração involuntária rítmica e alta resistência.",
+      "Músculo Liso: presente em vísceras, com contração lenta e involuntária, como no intestino.",
+      "Fibras Musculares: células alongadas com actina e miosina, responsáveis pela contração.",
+      "Sarcômero: unidade contrátil do músculo que encurta durante o esforço.",
+      "Contração Muscular: depende de cálcio, interação actina-miosina e consumo de ATP.",
+      "Sistema Respiratório: realiza trocas gasosas, fornece oxigênio, elimina CO₂ e contribui para equilíbrio do pH.",
+      "Cavidade Nasal: filtra, aquece e umidifica o ar, participa do olfato e protege vias aéreas.",
+      "Faringe: conduz ar e alimento, participa da deglutição e da defesa imunológica.",
+      "Laringe: estrutura cartilaginosa da fonação que também protege vias respiratórias.",
+      "Traqueia: tubo com anéis cartilaginosos que conduz ar aos brônquios e evita colapso.",
+      "Pulmões: órgãos com alvéolos para troca gasosa; direito com 3 lobos e esquerdo com 2.",
+      "Pleura: membrana com líquido lubrificante que reduz atrito na respiração.",
+      "Inspiração: entrada de ar com contração do diafragma, aumento do volume torácico e queda de pressão.",
+      "Expiração: saída de ar com relaxamento do diafragma e redução do volume torácico.",
+      "Sistema Circulatório: transporta sangue, nutrientes e resíduos, mantendo homeostase.",
+      "Artérias: vasos de alta pressão que levam sangue do coração, com paredes espessas e elásticas.",
+      "Veias: vasos de baixa pressão que trazem sangue ao coração e possuem válvulas.",
+      "Capilares: vasos finos entre artérias e veias onde ocorrem trocas por difusão.",
+      "Hematopoiese: formação de células sanguíneas na medula óssea, incluindo hemácias e leucócitos.",
+      "Sistema Linfático: transporta linfa, auxilia defesa e remove excesso de líquido tecidual.",
+      "Homeostase: manutenção do equilíbrio interno, incluindo pH, temperatura e funções vitais."
+    ];
+
+    const pesosMiniConteudosAnatomia = miniConteudosAnatomia.map((conteudo) => ({
+      nome: conteudo,
+      peso: 1
+    }));
+
     function sortearComPeso(lista) {
       const total = lista.reduce((soma, item) => soma + item.peso, 0);
       let sorteio = Math.random() * total;
@@ -245,6 +304,10 @@
 
       for (let i = 0; i < quantidade; i++) {
         const tarefa = sortearComPeso(pesosTarefas);
+        const textoTarefa =
+          tarefa === "Mini-conteúdo Anatomia"
+            ? `Mini Anatomia: ${sortearComPeso(pesosMiniConteudosAnatomia)}`
+            : tarefa;
 
         const div = document.createElement("div");
         div.className = "task";
@@ -252,7 +315,7 @@
         div.innerHTML = `
           <label class="task-left">
             <input type="checkbox" class="check" />
-            <span>${tarefa}</span>
+            <span>${textoTarefa}</span>
           </label>
           <div class="task-dot"></div>
         `;
