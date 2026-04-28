@@ -1,559 +1,300 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hiperfoco</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P-hf | Produtividade Gamificada</title>
+
   <style>
-    :root {
-      --bg: #ffffff;
-      --text: #161616;
-      --muted: #6b7280;
-      --line: #e5e7eb;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
-    * { box-sizing: border-box; }
-
     body {
-      margin: 0;
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      min-height: 100vh;
+      background: #515b78;
+      color: white;
       display: flex;
       justify-content: center;
+      align-items: center;
       padding: 24px;
-      min-height: 100vh;
     }
 
     .app {
       width: 100%;
-      max-width: 560px;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 24px;
-      background: #fff;
+      max-width: 900px;
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 32px;
+      text-align: center;
     }
 
-    .title {
-      margin: 0;
-      font-size: 1.5rem;
-      font-weight: 650;
-      line-height: 1.25;
-      letter-spacing: -0.01em;
+    .logo {
+      font-size: clamp(64px, 16vw, 140px);
+      font-weight: 900;
+      letter-spacing: -5px;
     }
 
-    .subtle {
-      color: var(--muted);
-      margin: 8px 0 20px;
-      font-size: 0.95rem;
-    }
-
-    .daily {
-      font-size: 2rem;
-      margin: 10px 0 20px;
-      font-weight: 700;
-    }
-
-    .progressWrap {
-      margin: 4px 0 18px;
-    }
-
-    .progressMeta {
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .progressBar {
-      width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      background: #f3f4f6;
-      overflow: hidden;
-      border: 1px solid var(--line);
-    }
-
-    .progressFill {
-      height: 100%;
-      width: 0%;
-      background: #111827;
-      transition: width 180ms ease;
-    }
-
-    .stack {
-      display: grid;
-      gap: 12px;
+    .subtitle {
+      font-size: clamp(28px, 7vw, 72px);
+      font-weight: 900;
     }
 
     button {
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: #fff;
-      color: var(--text);
-      padding: 12px 14px;
-      font-size: 1rem;
-      font-weight: 550;
+      border: none;
       cursor: pointer;
+      font-weight: 900;
+      transition: 0.2s;
     }
 
-    button:hover { background: #f9fafb; }
-
-    .section {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid var(--line);
+    button:active {
+      transform: scale(0.96);
     }
 
-    .meta {
-      font-size: 0.88rem;
-      color: var(--muted);
-      margin-bottom: 8px;
+    .play-btn {
+      background: white;
+      color: #515b78;
+      font-size: 28px;
+      padding: 20px 48px;
+      border-radius: 999px;
     }
 
-    .prompt {
-      font-size: 1rem;
-      line-height: 1.5;
-      margin-bottom: 12px;
-      white-space: pre-line;
-    }
-
-    .choice {
+    .tasks {
       width: 100%;
+      max-width: 680px;
+      display: none;
+      flex-direction: column;
+      gap: 18px;
       text-align: left;
-      margin-bottom: 8px;
-      font-weight: 450;
     }
 
-    .result {
-      font-size: 0.95rem;
-      color: var(--muted);
-      margin-top: 10px;
-      min-height: 20px;
-      white-space: pre-line;
+    .task {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: clamp(22px, 5vw, 42px);
+      font-weight: 900;
+      text-transform: uppercase;
     }
 
-    .hidden { display: none; }
+    .task input {
+      width: 34px;
+      height: 34px;
+      accent-color: #ff8c22;
+      flex-shrink: 0;
+    }
+
+    .task-dot {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffb21c, #ef3c7a);
+      flex-shrink: 0;
+    }
+
+    .task-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .finish-btn {
+      display: none;
+      background: #ff8c22;
+      color: white;
+      font-size: 24px;
+      padding: 18px 42px;
+      border-radius: 999px;
+      margin-top: 20px;
+    }
+
+    .result-screen {
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 10;
+      padding: 24px;
+    }
+
+    .result-screen.win {
+      background: linear-gradient(120deg, #35d07f, #00d9ff);
+      color: black;
+    }
+
+    .result-screen.lose {
+      background: red;
+      color: black;
+    }
+
+    .result-text {
+      font-size: clamp(52px, 11vw, 160px);
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .percent {
+      font-size: clamp(28px, 6vw, 70px);
+      margin-top: 20px;
+      font-weight: 900;
+    }
+
+    .restart-btn {
+      margin-top: 36px;
+      background: black;
+      color: white;
+      padding: 16px 34px;
+      border-radius: 999px;
+      font-size: 20px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 18px;
+      }
+
+      .app {
+        min-height: 86vh;
+      }
+
+      .task {
+        font-size: 24px;
+      }
+
+      .task-dot {
+        width: 36px;
+        height: 36px;
+      }
+
+      .task input {
+        width: 28px;
+        height: 28px;
+      }
+    }
   </style>
 </head>
+
 <body>
   <main class="app">
-    <section id="homeScreen">
-      <h1 class="title">Hiperfoco em Medicina</h1>
-      <p class="subtle">Ativador mental rápido. Sem metas, sem cobrança.</p>
-      <div class="subtle">Acertos do dia</div>
-      <div id="dailyAccuracy" class="daily">0%</div>
-      <div class="progressWrap">
-        <div id="dailyProgressMeta" class="progressMeta">Progressão do dia: 0/8</div>
-        <div class="progressBar">
-          <div id="dailyProgressFill" class="progressFill"></div>
-        </div>
-      </div>
-      <div class="stack">
-        <button id="btn1">1 min</button>
-        <button id="btn2">2 min</button>
-      </div>
-    </section>
+    <div id="startScreen">
+      <div class="logo">P-hf</div>
+      <div class="subtitle">PLAY</div>
+      <br />
+      <button class="play-btn" onclick="sortearTarefas()">SORTEAR</button>
+    </div>
 
-    <section id="challengeScreen" class="hidden section">
-      <div id="challengeMeta" class="meta"></div>
-      <div id="challengePrompt" class="prompt"></div>
-      <div id="challengeChoices"></div>
-      <div class="stack">
-        <button id="btnSkip">Ignorar</button>
-        <button id="btnBack">Voltar</button>
-      </div>
-      <div id="challengeResult" class="result"></div>
-    </section>
+    <section id="tasks" class="tasks"></section>
+
+    <button id="finishBtn" class="finish-btn" onclick="concluir()">CONCLUIR</button>
   </main>
 
+  <section id="resultScreen" class="result-screen">
+    <div>
+      <div id="resultText" class="result-text"></div>
+      <div id="percentText" class="percent"></div>
+      <button class="restart-btn" onclick="reiniciar()">JOGAR DE NOVO</button>
+    </div>
+  </section>
+
   <script>
-    const STORAGE_KEY = "hiperfoco-events";
-    const DAY_KEY = () => new Date().toISOString().slice(0, 10);
-
-    const subjects = [
-      { name: "Anatomia", weight: 55 },
-      { name: "CHG", weight: 25 },
-      { name: "Medicina comum", weight: 20 }
+    const pesosQuantidade = [
+      { valor: 3, peso: 8 },
+      { valor: 4, peso: 7 },
+      { valor: 5, peso: 30 },
+      { valor: 6, peso: 15 },
+      { valor: 7, peso: 17 },
+      { valor: 8, peso: 12 },
+      { valor: 9, peso: 3 },
+      { valor: 10, peso: 2 },
+      { valor: 11, peso: 2 },
+      { valor: 12, peso: 2 }
     ];
 
-    const types = [
-      { name: "flashcards", weight: 40 },
-      { name: "questao", weight: 20 },
-      { name: "texto", weight: 20 },
-      { name: "video", weight: 20 }
+    const pesosTarefas = [
+      { nome: "Flashcard Anatomia", peso: 40 },
+      { nome: "Flashcard CHG", peso: 30 },
+      { nome: "Caso estilo House", peso: 12 },
+      { nome: "Mini-conteúdo Anatomia", peso: 10 },
+      { nome: "Mini-conteúdo CHG", peso: 8 }
     ];
 
-    const dificuldadeFlashcards = [
-      { name: "Fácil", weight: 60 },
-      { name: "Média", weight: 20 },
-      { name: "Difícil", weight: 20 }
-    ];
+    function sortearComPeso(lista) {
+      const total = lista.reduce((soma, item) => soma + item.peso, 0);
+      let sorteio = Math.random() * total;
 
-    const miniConteudosAnatomiaFacil1Min = [
-      "O sistema circulatório funciona como uma rede fechada de transporte. O coração bombeia o sangue, os vasos conduzem e o sangue leva oxigênio, nutrientes, hormônios e células de defesa para os tecidos, além de remover resíduos.",
-      "A digestão começa na boca. Os dentes trituram o alimento, a saliva umedece e inicia a digestão química, e a língua organiza o bolo alimentar para a deglutição.",
-      "O sistema respiratório não apenas leva ar aos pulmões: ele filtra, aquece e umedece o ar, participa da troca de gases, ajuda no controle do pH e contribui para o olfato e a voz.",
-      "Os rins filtram o sangue, reabsorvem substâncias úteis e eliminam resíduos na urina. Também regulam pH, eletrólitos e volume sanguíneo, sendo essenciais para a homeostase.",
-      "O esqueleto axial é o eixo do corpo e inclui crânio, coluna vertebral, costelas, esterno e hioide. Sua função principal é sustentar e proteger estruturas vitais.",
-      "Músculo é um órgão ativo: contrai para gerar movimento, estabiliza posições e ajuda na produção de calor. O movimento corporal depende da integração entre músculos, ossos, articulações e sistema nervoso.",
-      "O osso é um tecido vivo, vascularizado e em constante remodelação. Além de sustentar, participa da proteção, da reserva mineral e da produção de células sanguíneas.",
-      "O sistema genital feminino produz gametas, secreta hormônios, permite fecundação e gestação e participa do parto e da amamentação.",
-      "As articulações unem ossos e podem ser imóveis, semimóveis ou móveis. As articulações sinoviais têm maior mobilidade por possuírem cavidade articular e líquido sinovial."
-    ];
-
-    const linksAnatomiaShorts = [
-      "https://www.youtube.com/watch?v=foQqXkUlWzU",
-      "https://www.youtube.com/watch?v=8nu29oHOou0",
-      "https://www.youtube.com/watch?v=zAtoxwXzV_s",
-      "https://www.youtube.com/watch?v=acAHWFD10JQ",
-      "https://www.youtube.com/watch?v=1LsO8Cw505M",
-      "https://www.youtube.com/watch?v=2QlVWOxFu4g",
-      "https://www.youtube.com/watch?v=PzXjunPlT9Q",
-      "https://www.youtube.com/watch?v=scg1qOtx94Y",
-      "https://www.youtube.com/watch?v=pWHBQfir3zQ",
-      "https://www.youtube.com/watch?v=veJZMDxCPC0",
-      "https://www.youtube.com/watch?v=4ZemDDZpi9Y",
-      "https://www.youtube.com/watch?v=EIEMBB_kw5E",
-      "https://www.youtube.com/watch?v=NrbPlYwHUfg",
-      "https://www.youtube.com/watch?v=7_ZT2sgArrc",
-      "https://www.youtube.com/watch?v=6eDE33WkIeg",
-      "https://www.youtube.com/watch?v=AULpJFuvJrw",
-      "https://www.youtube.com/watch?v=TRhsdudKCdw",
-      "https://www.youtube.com/watch?v=XjqtNbRxLFQ",
-      "https://www.youtube.com/watch?v=8UBvLtT_VyM",
-      "https://www.youtube.com/watch?v=MixOI-wH7qc",
-      "https://www.youtube.com/watch?v=gqO2oZXQ_R0",
-      "https://www.youtube.com/watch?v=EpMXY66pow0",
-      "https://www.youtube.com/watch?v=g4jTWzqc8nw",
-      "https://www.youtube.com/watch?v=h6r7hcC5A6M",
-      "https://www.youtube.com/watch?v=BSP0WDtYysc",
-      "https://www.youtube.com/watch?v=Cxl2v7zOhjE",
-      "https://www.youtube.com/watch?v=0YJytIvOA_w",
-      "https://www.youtube.com/watch?v=W47sZquxMPg",
-      "https://www.youtube.com/watch?v=Wy_LuK7CGbg",
-      "https://www.youtube.com/watch?v=nqrV-nG1hxc",
-      "https://www.youtube.com/watch?v=UoQwP3qaMBM",
-      "https://www.youtube.com/watch?v=r6XKUy1kxkA",
-      "https://www.youtube.com/watch?v=d7uusgY3-y8",
-      "https://www.youtube.com/watch?v=Z11th6rkGQg",
-      "https://www.youtube.com/watch?v=7sX1ApXC76g",
-      "https://www.youtube.com/watch?v=em6DfQulaa8",
-      "https://www.youtube.com/watch?v=7AH_XVc2iRs",
-      "https://www.youtube.com/watch?v=ZHqdIuqVFQM",
-      "https://www.youtube.com/watch?v=zSkwXsWLbn0",
-      "https://www.youtube.com/watch?v=lmySZGrt8Gc",
-      "https://www.youtube.com/watch?v=XmvQtCvKzy4",
-      "https://www.youtube.com/watch?v=rOYAm2360FI",
-      "https://www.youtube.com/watch?v=CaPxBQmWV2I",
-      "https://www.youtube.com/watch?v=YHOhLBr6tQE",
-      "https://www.youtube.com/watch?v=3scc5P3KHrc",
-      "https://www.youtube.com/watch?v=yhOtSJAi920",
-      "https://www.youtube.com/watch?v=gFFcFCndCME",
-      "https://www.youtube.com/watch?v=CEbV0_qZPIA",
-      "https://www.youtube.com/watch?v=iKBRv9p1Ckc",
-      "https://www.youtube.com/watch?v=d1alZLFXh-A",
-      "https://www.youtube.com/watch?v=CJazXjuCq5Q",
-      "https://www.youtube.com/watch?v=P2f-ixobf3U"
-    ];
-
-    function youtubeWatchToShorts(url) {
-      try {
-        const parsed = new URL(url);
-        const videoId = parsed.searchParams.get("v");
-        return videoId ? `https://www.youtube.com/shorts/${videoId}` : url;
-      } catch {
-        return url;
+      for (const item of lista) {
+        sorteio -= item.peso;
+        if (sorteio <= 0) return item.valor || item.nome;
       }
     }
 
-    const flashcardsAnatomia = {
-      "Fácil": [
-        { frente: "Qual é a função geral do sistema circulatório?", verso: "Transportar sangue, oxigênio, nutrientes, hormônios, células de defesa e resíduos pelo corpo." },
-        { frente: "Artéria sempre carrega sangue oxigenado?", verso: "Não. Artéria é o vaso que sai do coração, mesmo quando transporta sangue pobre em oxigênio." },
-        { frente: "Onde ocorre a principal troca entre sangue e tecidos?", verso: "Nos capilares, por causa de suas paredes muito finas." },
-        { frente: "Onde começa a digestão?", verso: "Na boca, com mastigação, saliva e início da digestão química." },
-        { frente: "Quais são as principais glândulas salivares?", verso: "Parótida, submandibular e sublingual." },
-        { frente: "Quais são as divisões da faringe?", verso: "Nasofaringe, orofaringe e laringofaringe." },
-        { frente: "Qual é a função principal dos rins?", verso: "Filtrar o sangue, reabsorver substâncias úteis e eliminar resíduos pela urina." },
-        { frente: "O que é o néfron?", verso: "É a unidade funcional do rim, responsável por filtrar e ajustar o filtrado." },
-        { frente: "O que forma o esqueleto axial?", verso: "Crânio, coluna vertebral, hioide, costelas e esterno." },
-        { frente: "Quais são as regiões da coluna vertebral?", verso: "Cervical, torácica, lombar, sacral e coccígea." },
-        { frente: "O que é um músculo?", verso: "Um órgão ativo capaz de contrair e produzir movimento." },
-        { frente: "Quais são as propriedades musculares?", verso: "Excitabilidade, condutividade, contratilidade, extensibilidade e elasticidade." },
-        { frente: "Osso é tecido vivo?", verso: "Sim. Ele tem irrigação sanguínea, responde a estímulos e pode se regenerar." },
-        { frente: "O que é o periósteo?", verso: "É a membrana que reveste externamente o osso." },
-        { frente: "Quais são funções do sistema genital feminino?", verso: "Produzir gametas, permitir fecundação, gestação, parto e amamentação." },
-        { frente: "Onde geralmente ocorre a fecundação?", verso: "Na ampola da tuba uterina." },
-        { frente: "O que é uma articulação?", verso: "É a união entre ossos, com maior ou menor grau de movimento." },
-        { frente: "Qual é a função dos ligamentos?", verso: "Unir ossos e limitar movimentos excessivos." }
-      ],
-      "Média": [
-        { frente: "O que diferencia a circulação portal da circulação sistêmica comum?", verso: "Ela passa por dois leitos capilares antes de retornar ao coração, como no trajeto intestino-fígado." },
-        { frente: "Por que a deglutição é um mecanismo de proteção?", verso: "Porque coordena estruturas como epiglote e palato para evitar entrada de alimento na via aérea." },
-        { frente: "Quais substâncias endócrinas renais têm destaque clínico?", verso: "Renina, relacionada à pressão arterial, e eritropoetina, ligada à produção de hemácias." },
-        { frente: "Por que unidades motoras pequenas permitem maior precisão?", verso: "Porque cada neurônio inerva menos fibras, refinando o controle do movimento." },
-        { frente: "Quais estruturas compõem uma articulação sinovial?", verso: "Cavidade articular, cápsula, membrana sinovial, líquido sinovial e cartilagem." }
-      ],
-      "Difícil": [
-        { frente: "Explique, de forma integrada, como parede vascular e pressão se relacionam entre artérias, veias e capilares.", verso: "Artérias têm paredes espessas para suportar alta pressão; veias operam em baixa pressão e contam com válvulas; capilares possuem parede muito fina para permitir trocas." },
-        { frente: "Resuma a formação da urina destacando etapas e locais funcionais.", verso: "A urina resulta de filtração glomerular seguida de reabsorção e secreção tubular no néfron." },
-        { frente: "Relacione fibras tipo I e IIB ao desempenho físico.", verso: "Tipo I: contração lenta e alta resistência à fadiga; tipo IIB: alta potência, metabolismo predominantemente anaeróbico e fadiga rápida." },
-        { frente: "Compare sinartrose, anfiartrose e diartrose em termos de mobilidade e tecido predominante.", verso: "Sinartrose é imóvel e geralmente fibrosa; anfiartrose é semimóvel e geralmente cartilaginosa; diartrose é móvel e geralmente sinovial." },
-        { frente: "Descreva a relevância anatômica do sacro na transmissão de cargas.", verso: "O sacro, formado por vértebras fundidas, transfere o peso do tronco para a pelve e membros inferiores, contribuindo para estabilidade pélvica." }
-      ]
-    };
+    function sortearTarefas() {
+      const quantidade = sortearComPeso(pesosQuantidade);
+      const tasksContainer = document.getElementById("tasks");
 
-    const placeholders = {
-      flashcards: {
-        title: "Flash-card rápido",
-        prompt: "Flash-card 1/3\nTema: {{materia}}\n\n(Conteúdo será preenchido depois)",
-        cards: 3
-      },
-      questao: {
-        title: "Questão estilo House",
-        prompt: "Paciente com dor torácica súbita e dispneia. Qual hipótese diagnóstica inicial é mais provável?",
-        choices: ["TEP", "Asma leve", "Dengue", "Labirintite"],
-        correctIndex: 0
-      },
-      texto: {
-        title: "Texto curto",
-        prompt: "Resumo de {{tempo}} de {{materia}}.\n\n(Conteúdo será preenchido depois)"
-      },
-      video: {
-        title: "Vídeo curto",
-        prompt: "Vídeo sugerido (30s–2min) sobre {{materia}}.\n\n(Link do YouTube será adicionado no banco depois)."
-      }
-    };
+      tasksContainer.innerHTML = "";
 
-    let activeChallenge = null;
+      for (let i = 0; i < quantidade; i++) {
+        const tarefa = sortearComPeso(pesosTarefas);
 
-    const homeScreen = document.getElementById("homeScreen");
-    const challengeScreen = document.getElementById("challengeScreen");
-    const accuracyEl = document.getElementById("dailyAccuracy");
-    const challengeMeta = document.getElementById("challengeMeta");
-    const challengePrompt = document.getElementById("challengePrompt");
-    const challengeChoices = document.getElementById("challengeChoices");
-    const challengeResult = document.getElementById("challengeResult");
-    const progressMetaEl = document.getElementById("dailyProgressMeta");
-    const progressFillEl = document.getElementById("dailyProgressFill");
-    const DAILY_PROGRESS_TARGET = 8;
+        const div = document.createElement("div");
+        div.className = "task";
 
-    function weightedPick(list) {
-      const total = list.reduce((sum, item) => sum + item.weight, 0);
-      let roll = Math.random() * total;
-      for (const item of list) {
-        roll -= item.weight;
-        if (roll <= 0) return item.name;
-      }
-      return list[list.length - 1].name;
-    }
+        div.innerHTML = `
+          <label class="task-left">
+            <input type="checkbox" class="check" />
+            <span>${tarefa}</span>
+          </label>
+          <div class="task-dot"></div>
+        `;
 
-    function pickRandom(list) {
-      return list[Math.floor(Math.random() * list.length)];
-    }
-
-    function pickMany(list, count) {
-      const copy = [...list];
-      for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [copy[i], copy[j]] = [copy[j], copy[i]];
-      }
-      return copy.slice(0, count);
-    }
-
-    function buildChallenge(minutes) {
-      const subject = weightedPick(subjects);
-      const contentType = weightedPick(types);
-      const base = placeholders[contentType];
-
-      const challenge = {
-        subject,
-        contentType,
-        minutes,
-        title: base.title,
-        prompt: base.prompt
-          .replace(/{{materia}}/g, subject)
-          .replace(/{{tempo}}/g, `${minutes} min`),
-        choices: base.choices || null,
-        correctIndex: base.correctIndex ?? null,
-        cards: base.cards || null,
-        difficulty: null,
-        deck: null,
-        selectedCards: null,
-      };
-
-      if (subject === "Anatomia" && contentType === "texto" && minutes === 1) {
-        challenge.title = "Mini conteúdo de anatomia — leitura rápida";
-        challenge.prompt = pickRandom(miniConteudosAnatomiaFacil1Min);
+        tasksContainer.appendChild(div);
       }
 
-      if (subject === "Anatomia" && contentType === "flashcards") {
-        const difficulty = weightedPick(dificuldadeFlashcards);
-        challenge.difficulty = difficulty;
-        challenge.title = `Flashcards de Anatomia (${difficulty})`;
+      document.getElementById("startScreen").style.display = "none";
+      tasksContainer.style.display = "flex";
+      document.getElementById("finishBtn").style.display = "block";
+    }
 
-        const deck = flashcardsAnatomia[difficulty];
-        challenge.deck = deck;
-        challenge.cards = Math.min(3, deck.length);
-        challenge.selectedCards = pickMany(deck, challenge.cards);
-        challenge.prompt = "Toque em um flashcard para abrir a pergunta e a resposta.";
+    function concluir() {
+      const checks = document.querySelectorAll(".check");
+      const marcados = document.querySelectorAll(".check:checked");
+
+      const total = checks.length;
+      const acertos = marcados.length;
+      const porcentagem = Math.round((acertos / total) * 100);
+
+      const resultScreen = document.getElementById("resultScreen");
+      const resultText = document.getElementById("resultText");
+      const percentText = document.getElementById("percentText");
+
+      if (porcentagem >= 60) {
+        resultScreen.className = "result-screen win";
+        resultText.textContent = "VOCÊ CONSEGUIU";
+      } else {
+        resultScreen.className = "result-screen lose";
+        resultText.textContent = "VOCÊ PERDEU";
       }
 
-      if (subject === "Anatomia" && contentType === "video") {
-        const shortsUrl = youtubeWatchToShorts(pickRandom(linksAnatomiaShorts));
-        challenge.title = "Vídeo curto de Anatomia (Shorts)";
-        challenge.prompt = `Vídeo sugerido (< 1 min):\n${shortsUrl}`;
-      }
-
-      return challenge;
+      percentText.textContent = `${porcentagem}% de acerto`;
+      resultScreen.style.display = "flex";
     }
 
-    function showChallenge(minutes) {
-      activeChallenge = buildChallenge(minutes);
-      homeScreen.classList.add("hidden");
-      challengeScreen.classList.remove("hidden");
-      challengeResult.textContent = "";
-
-      const difficultyTag = activeChallenge.difficulty ? ` • ${activeChallenge.difficulty}` : "";
-      challengeMeta.textContent = `${activeChallenge.subject} • ${activeChallenge.contentType}${difficultyTag} • ${activeChallenge.minutes} min`;
-      challengePrompt.textContent = activeChallenge.prompt;
-      challengeChoices.innerHTML = "";
-
-      if (activeChallenge.cards) {
-        const cards = activeChallenge.selectedCards || activeChallenge.deck || [];
-        let openedCards = 0;
-
-        for (let i = 0; i < activeChallenge.cards; i++) {
-          const flash = cards[i];
-          const card = document.createElement("button");
-          card.className = "choice";
-          card.textContent = `Flashcard ${i + 1}`;
-          card.dataset.state = "front";
-
-          card.onclick = () => {
-            if (!flash) {
-              challengeResult.textContent = "Flashcard aberto.";
-              return;
-            }
-
-            if (card.dataset.state === "front") {
-              challengeResult.textContent = `Frente: ${flash.frente}\n\nToque novamente para ver a resposta.`;
-              card.dataset.state = "back";
-              return;
-            }
-
-            challengeResult.textContent = `Frente: ${flash.frente}\nVerso: ${flash.verso}`;
-            card.disabled = true;
-            card.textContent = `Flashcard ${i + 1} ✓`;
-            openedCards += 1;
-
-            if (openedCards === activeChallenge.cards) {
-              finishFlashcardsBtn.classList.remove("hidden");
-              challengeResult.textContent += "\n\nTodos os flashcards foram vistos.";
-            }
-          };
-          challengeChoices.appendChild(card);
-        }
-
-        const finishFlashcardsBtn = document.createElement("button");
-        finishFlashcardsBtn.className = "choice hidden";
-        finishFlashcardsBtn.textContent = "Concluir flashcards";
-        finishFlashcardsBtn.onclick = () => answerQuestion(true);
-        challengeChoices.appendChild(finishFlashcardsBtn);
-      }
-
-      if (activeChallenge.choices) {
-        activeChallenge.choices.forEach((choice, index) => {
-          const btn = document.createElement("button");
-          btn.className = "choice";
-          btn.textContent = choice;
-          btn.onclick = () => answerQuestion(index === activeChallenge.correctIndex);
-          challengeChoices.appendChild(btn);
-        });
-      }
-
-      if (!activeChallenge.cards && !activeChallenge.choices) {
-        const doneBtn = document.createElement("button");
-        doneBtn.className = "choice";
-        doneBtn.textContent = "Concluir";
-        doneBtn.onclick = () => answerQuestion(true);
-        challengeChoices.appendChild(doneBtn);
-      }
+    function reiniciar() {
+      document.getElementById("resultScreen").style.display = "none";
+      document.getElementById("tasks").style.display = "none";
+      document.getElementById("finishBtn").style.display = "none";
+      document.getElementById("startScreen").style.display = "block";
     }
-
-    function readEvents() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      } catch {
-        return [];
-      }
-    }
-
-    function saveEvent(event) {
-      const events = readEvents();
-      events.push(event);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
-    }
-
-    function calculateDailyAccuracy() {
-      const day = DAY_KEY();
-      const events = readEvents().filter((e) => e.day === day && e.result !== "ignored");
-      if (!events.length) return 0;
-      const hits = events.filter((e) => e.result === "correct").length;
-      return Math.round((hits / events.length) * 100);
-    }
-
-    function renderAccuracy() {
-      accuracyEl.textContent = `${calculateDailyAccuracy()}%`;
-      renderProgress();
-    }
-
-    function calculateDailyProgress() {
-      const day = DAY_KEY();
-      const completed = readEvents().filter((e) => e.day === day && e.result !== "ignored").length;
-      const percent = Math.min(100, Math.round((completed / DAILY_PROGRESS_TARGET) * 100));
-      return { completed, percent };
-    }
-
-    function renderProgress() {
-      const { completed, percent } = calculateDailyProgress();
-      progressMetaEl.textContent = `Progressão do dia: ${completed}/${DAILY_PROGRESS_TARGET}`;
-      progressFillEl.style.width = `${percent}%`;
-    }
-
-    function record(result) {
-      if (!activeChallenge) return;
-      saveEvent({
-        day: DAY_KEY(),
-        seenAt: new Date().toISOString(),
-        subject: activeChallenge.subject,
-        type: activeChallenge.contentType,
-        chosenTime: activeChallenge.minutes,
-        difficulty: activeChallenge.difficulty,
-        viewedContent: activeChallenge.title,
-        result,
-      });
-      renderAccuracy();
-    }
-
-    function answerQuestion(correct) {
-      record(correct ? "correct" : "wrong");
-      challengeResult.textContent = correct ? "Resposta registrada como acerto." : "Resposta registrada como erro.";
-    }
-
-    document.getElementById("btn1").onclick = () => showChallenge(1);
-    document.getElementById("btn2").onclick = () => showChallenge(2);
-    document.getElementById("btnSkip").onclick = () => {
-      record("ignored");
-      challengeResult.textContent = "Desafio ignorado.";
-    };
-    document.getElementById("btnBack").onclick = () => {
-      challengeScreen.classList.add("hidden");
-      homeScreen.classList.remove("hidden");
-      activeChallenge = null;
-    };
-
-    renderAccuracy();
   </script>
 </body>
 </html>
