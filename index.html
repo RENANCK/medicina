@@ -144,6 +144,49 @@
       display: block;
     }
 
+    .flashcard-content {
+      background: #ffffff;
+      color: #1d2438;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(15, 21, 43, 0.18);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .flashcard-front {
+      font-size: clamp(24px, 3.4vw, 38px);
+      font-weight: 900;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .flashcard-answer {
+      display: none;
+      padding-top: 14px;
+      border-top: 2px solid #e8edf8;
+      font-size: clamp(21px, 3vw, 32px);
+      font-weight: 800;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .flashcard-answer.open {
+      display: block;
+    }
+
+    .flashcard-toggle {
+      align-self: center;
+      background: #515b78;
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 12px 22px;
+      font-size: clamp(15px, 2vw, 20px);
+      font-weight: 900;
+    }
+
     .finish-btn {
       display: none;
       background: #ff8c22;
@@ -217,6 +260,16 @@
       .task input {
         width: 28px;
         height: 28px;
+      }
+
+      .mini-content {
+        margin-left: 0;
+        padding-left: 10px;
+      }
+
+      .flashcard-content {
+        padding: 16px;
+        border-radius: 14px;
       }
     }
   </style>
@@ -683,6 +736,54 @@
       }
     }
 
+    function criarConteudoMiniTarefa(conteudo) {
+      const miniDiv = document.createElement("div");
+      miniDiv.className = "mini-content";
+
+      if (!conteudo) {
+        return miniDiv;
+      }
+
+      if (conteudo.tipo === "flashcard") {
+        const flashcard = document.createElement("article");
+        flashcard.className = "flashcard-content";
+
+        if (conteudo.id != null) {
+          flashcard.dataset.flashcardId = String(conteudo.id);
+        }
+
+        const frente = document.createElement("p");
+        frente.className = "flashcard-front";
+        frente.textContent = conteudo.frente;
+
+        const botaoResposta = document.createElement("button");
+        botaoResposta.type = "button";
+        botaoResposta.className = "flashcard-toggle";
+        botaoResposta.textContent = "Mostrar resposta";
+
+        const verso = document.createElement("p");
+        verso.className = "flashcard-answer";
+        verso.textContent = conteudo.verso;
+
+        botaoResposta.addEventListener("click", () => {
+          verso.classList.toggle("open");
+          const respostaVisivel = verso.classList.contains("open");
+          botaoResposta.textContent = respostaVisivel
+            ? "Ocultar resposta"
+            : "Mostrar resposta";
+        });
+
+        flashcard.appendChild(frente);
+        flashcard.appendChild(botaoResposta);
+        flashcard.appendChild(verso);
+        miniDiv.appendChild(flashcard);
+        return miniDiv;
+      }
+
+      miniDiv.textContent = conteudo.texto || "";
+      return miniDiv;
+    }
+
     function sortearTarefas() {
       const quantidade = sortearComPeso(pesosQuantidade);
       const tasksContainer = document.getElementById("tasks");
@@ -693,24 +794,35 @@
         const tarefa = sortearComPeso(pesosTarefas);
         const miniConteudo = (() => {
           if (tarefa === "Mini-conteúdo Anatomia") {
-            return sortearComPeso(pesosMiniConteudosAnatomia);
+            return {
+              tipo: "texto",
+              texto: sortearComPeso(pesosMiniConteudosAnatomia)
+            };
           }
 
           if (tarefa === "Flashcard Anatomia") {
             const flashcard = flashcardsAnatomia[
               Math.floor(Math.random() * flashcardsAnatomia.length)
             ];
-            return `Frente: ${flashcard.frente}\nVerso: ${flashcard.verso}`;
+            return {
+              tipo: "flashcard",
+              id: flashcard.id,
+              frente: flashcard.frente,
+              verso: flashcard.verso
+            };
           }
 
           if (tarefa === "Caso estilo House") {
             const caso = casosEstiloHouse[
               Math.floor(Math.random() * casosEstiloHouse.length)
             ];
-            return `${caso.caso}\n${caso.alternativas.join("\n")}\nResposta: ${caso.resposta}`;
+            return {
+              tipo: "texto",
+              texto: `${caso.caso}\n${caso.alternativas.join("\n")}\nResposta: ${caso.resposta}`
+            };
           }
 
-          return "";
+          return null;
         })();
 
         const item = document.createElement("div");
@@ -730,9 +842,7 @@
           <div class="task-dot"></div>
         `;
 
-        const miniDiv = document.createElement("div");
-        miniDiv.className = "mini-content";
-        miniDiv.textContent = miniConteudo;
+        const miniDiv = criarConteudoMiniTarefa(miniConteudo);
 
         const toggleBtn = div.querySelector(".menu-toggle");
 
