@@ -134,7 +134,7 @@
       border-left: 3px solid #ffb21c;
       padding-left: 14px;
       white-space: pre-line;
-      font-size: clamp(14px, 2vw, 20px);
+      font-size: clamp(20px, 3.2vw, 34px);
       line-height: 1.45;
       text-transform: none;
       font-weight: 700;
@@ -416,57 +416,257 @@
 
 
     const miniConteudosAnatomia = [
-      "Sistema Esquelético – Função: dá suporte ao corpo, protege órgãos, auxilia movimento, reserva minerais e participa da hematopoiese.",
-      "Matriz Óssea: formada por parte orgânica (colágeno tipo I) e mineral (cálcio e fosfato), garantindo resistência ao osso.",
-      "Cartilagem: tecido avascular e flexível que reduz impacto articular, nutre-se por difusão e é mais abundante em crianças.",
-      "Osteoblastos: células formadoras do osso, produtoras da matriz óssea e ativas na regeneração de fraturas.",
-      "Osteócitos: células ósseas maduras na matriz, essenciais para manutenção estrutural e troca de nutrientes.",
-      "Osteoclastos: células grandes multinucleadas responsáveis pela reabsorção e remodelação óssea.",
-      "Periósteo: camada externa vascularizada e inervada, importante para crescimento e regeneração óssea.",
-      "Endósteo: reveste cavidades internas do osso, produz células ósseas e atua na remodelação.",
-      "Osso Compacto: tecido denso e resistente da camada externa dos ossos, com poucos espaços.",
-      "Osso Esponjoso: tecido leve com cavidades que abriga medula óssea e participa da hematopoiese.",
-      "Ossos Longos: maiores no comprimento, como fêmur e úmero; possuem diáfise e epífise e auxiliam o movimento.",
-      "Ossos Curtos: dimensões semelhantes e formato cúbico, como ossos do carpo, oferecendo estabilidade.",
-      "Ossos Planos: finos e largos, como crânio e esterno, com função principal de proteção.",
-      "Ossos Irregulares: ossos de formato complexo, como vértebras, com funções variadas.",
-      "Ossos Pneumáticos: possuem cavidades com ar, reduzem o peso do crânio e se relacionam aos seios paranasais.",
-      "Medula Óssea: tecido hematopoético vermelho ou amarelado dentro dos ossos, essencial à produção sanguínea.",
-      "Coluna Vertebral: formada por vértebras, protege a medula espinal, permite movimentos e divide-se em regiões.",
-      "Vértebras Cervicais: sete vértebras com forames transversos, incluindo atlas e áxis, para mobilidade do pescoço.",
-      "Vértebras Torácicas: articulam-se com costelas, possuem fóveas costais e movimento mais limitado.",
-      "Vértebras Lombares: grandes e fortes, com corpo volumoso para suporte de peso e flexão/extensão.",
-      "Sacro: conjunto de vértebras fundidas que liga coluna e pelve, essencial para sustentação.",
-      "Cóccix: porção final da coluna, pequena e triangular, sujeita à pressão ao sentar.",
-      "Esterno: osso plano central do tórax que protege órgãos vitais e articula com costelas.",
-      "Costelas: ossos curvos que protegem coração e pulmões e auxiliam a mecânica respiratória.",
-      "Articulações: uniões entre ossos que permitem movimento, podendo ser móveis ou fixas.",
-      "Articulação Sinovial: apresenta cápsula e líquido sinovial, com ampla mobilidade como no joelho.",
-      "Articulação Fibrosa: união por tecido fibroso, com pouco ou nenhum movimento, como suturas cranianas.",
-      "Articulação Cartilaginosa: união por cartilagem, com mobilidade limitada e absorção de impacto.",
-      "Músculo Esquelético: tecido estriado voluntário ligado aos ossos para movimento corporal.",
-      "Músculo Cardíaco: tecido do coração com contração involuntária rítmica e alta resistência.",
-      "Músculo Liso: presente em vísceras, com contração lenta e involuntária, como no intestino.",
-      "Fibras Musculares: células alongadas com actina e miosina, responsáveis pela contração.",
-      "Sarcômero: unidade contrátil do músculo que encurta durante o esforço.",
-      "Contração Muscular: depende de cálcio, interação actina-miosina e consumo de ATP.",
-      "Sistema Respiratório: realiza trocas gasosas, fornece oxigênio, elimina CO₂ e contribui para equilíbrio do pH.",
-      "Cavidade Nasal: filtra, aquece e umidifica o ar, participa do olfato e protege vias aéreas.",
-      "Faringe: conduz ar e alimento, participa da deglutição e da defesa imunológica.",
-      "Laringe: estrutura cartilaginosa da fonação que também protege vias respiratórias.",
-      "Traqueia: tubo com anéis cartilaginosos que conduz ar aos brônquios e evita colapso.",
-      "Pulmões: órgãos com alvéolos para troca gasosa; direito com 3 lobos e esquerdo com 2.",
-      "Pleura: membrana com líquido lubrificante que reduz atrito na respiração.",
-      "Inspiração: entrada de ar com contração do diafragma, aumento do volume torácico e queda de pressão.",
-      "Expiração: saída de ar com relaxamento do diafragma e redução do volume torácico.",
-      "Sistema Circulatório: transporta sangue, nutrientes e resíduos, mantendo homeostase.",
-      "Artérias: vasos de alta pressão que levam sangue do coração, com paredes espessas e elásticas.",
-      "Veias: vasos de baixa pressão que trazem sangue ao coração e possuem válvulas.",
-      "Capilares: vasos finos entre artérias e veias onde ocorrem trocas por difusão.",
-      "Hematopoiese: formação de células sanguíneas na medula óssea, incluindo hemácias e leucócitos.",
-      "Sistema Linfático: transporta linfa, auxilia defesa e remove excesso de líquido tecidual.",
-      "Homeostase: manutenção do equilíbrio interno, incluindo pH, temperatura e funções vitais."
-    ];
+      `1. Sistema Esquelético – Função
+O sistema esquelético dá suporte ao corpo e protege órgãos vitais.
+Ele também permite movimentação junto aos músculos.
+Serve como reserva de minerais como cálcio.
+Além disso, participa da produção de células sanguíneas.`,
+      `2. Matriz Óssea
+A matriz óssea é formada por parte orgânica e mineral.
+A parte orgânica contém colágeno tipo I.
+A parte mineral é rica em cálcio e fosfato.
+Essa composição dá resistência e rigidez ao osso.`,
+      `3. Cartilagem
+A cartilagem é um tecido avascular e flexível.
+Ela reduz impacto nas articulações.
+Recebe nutrientes por difusão.
+É mais abundante em crianças.`,
+      `4. Osteoblastos
+São células formadoras do osso.
+Produzem a matriz óssea.
+Atuam na regeneração após fraturas.
+São metabolicamente ativos.`,
+      `5. Osteócitos
+São células maduras do osso.
+Ficam dentro da matriz óssea.
+Mantêm a estrutura óssea.
+Permitem troca de nutrientes.`,
+      `6. Osteoclastos
+São responsáveis pela reabsorção óssea.
+Degradam a matriz do osso.
+Participam da remodelação.
+São grandes e multinucleados.`,
+      `7. Periósteo
+Camada externa do osso.
+Rica em vasos e nervos.
+Participa do crescimento ósseo.
+Ajuda na regeneração.`,
+      `8. Endósteo
+Reveste cavidades internas do osso.
+Produz células ósseas.
+Atua na remodelação.
+Importante para equilíbrio ósseo.`,
+      `9. Osso Compacto
+É denso e resistente.
+Forma a parte externa dos ossos.
+Suporta cargas mecânicas.
+Possui poucos espaços.`,
+      `10. Osso Esponjoso
+Possui várias cavidades.
+É mais leve que o compacto.
+Abriga a medula óssea.
+Importante para hematopoiese.`,
+      `11. Ossos Longos
+Possuem comprimento maior que largura.
+Ex: fêmur e úmero.
+Possuem diáfise e epífise.
+Importantes para movimento.`,
+      `12. Ossos Curtos
+Têm dimensões semelhantes.
+Formato cúbico.
+Ex: ossos do carpo.
+Oferecem estabilidade.`,
+      `13. Ossos Planos
+São finos e largos.
+Protegem órgãos.
+Ex: crânio e esterno.
+Importantes para proteção.`,
+      `14. Ossos Irregulares
+Formato complexo.
+Não seguem padrão.
+Ex: vértebras.
+Função variada.`,
+      `15. Ossos Pneumáticos
+Possuem cavidades com ar.
+Reduzem peso do crânio.
+Ex: frontal e maxila.
+Relacionados aos seios.`,
+      `16. Medula Óssea
+Responsável pela produção de sangue.
+Pode ser vermelha ou amarela.
+Fica dentro dos ossos.
+Essencial para vida.`,
+      `17. Coluna Vertebral
+Formada por vértebras.
+Protege a medula espinal.
+Permite movimento.
+Divide-se em regiões.`,
+      `18. Vértebras Cervicais
+São 7 vértebras.
+Possuem forames transversos.
+Permitem mobilidade do pescoço.
+Ex: atlas e áxis.`,
+      `19. Vértebras Torácicas
+Articulam com costelas.
+Movimento limitado.
+Possuem fóveas costais.
+Formam parte do tórax.`,
+      `20. Vértebras Lombares
+São grandes e fortes.
+Suportam peso do corpo.
+Possuem corpo volumoso.
+Movimento de flexão/extensão.`,
+      `21. Sacro
+Formado por vértebras fundidas.
+Conecta coluna à pelve.
+Importante para sustentação.
+Possui forames.`,
+      `22. Cóccix
+Estrutura final da coluna.
+Pequeno e triangular.
+Sem função de sustentação.
+Pode sofrer pressão ao sentar.`,
+      `23. Esterno
+Osso plano do tórax.
+Divide-se em partes.
+Protege órgãos vitais.
+Articula com costelas.`,
+      `24. Costelas
+Protegem pulmões e coração.
+Podem ser verdadeiras ou falsas.
+Auxiliam na respiração.
+São ossos curvos.`,
+      `25. Articulações
+Unem ossos entre si.
+Permitem movimento.
+Podem ser móveis ou fixas.
+Essenciais para locomoção.`,
+      `26. Articulação Sinovial
+Possui líquido sinovial.
+Permite grande mobilidade.
+Ex: joelho.
+Possui cápsula articular.`,
+      `27. Articulação Fibrosa
+Pouco ou nenhum movimento.
+Unidas por tecido fibroso.
+Ex: suturas do crânio.
+Muito resistentes.`,
+      `28. Articulação Cartilaginosa
+Unidas por cartilagem.
+Movimento limitado.
+Ex: discos vertebrais.
+Importantes para absorção de impacto.`,
+      `29. Músculo Esquelético
+Controlado voluntariamente.
+Permite movimento do corpo.
+Ligado aos ossos.
+Possui estriações.`,
+      `30. Músculo Cardíaco
+Forma o coração.
+Contração involuntária.
+Ritmo constante.
+Altamente resistente.`,
+      `31. Músculo Liso
+Presente em órgãos internos.
+Contração lenta.
+Involuntário.
+Ex: intestino.`,
+      `32. Fibras Musculares
+São células longas.
+Responsáveis pela contração.
+Contêm actina e miosina.
+Geram movimento.`,
+      `33. Sarcômero
+Unidade básica do músculo.
+Responsável pela contração.
+Formado por proteínas.
+Encorta durante esforço.`,
+      `34. Contração Muscular
+Depende de cálcio.
+Envolve actina e miosina.
+Gera movimento.
+Consome ATP.`,
+      `35. Sistema Respiratório
+Responsável pela troca gasosa.
+Leva oxigênio ao corpo.
+Remove CO₂.
+Mantém equilíbrio do pH.`,
+      `36. Cavidade Nasal
+Filtra e aquece o ar.
+Possui pelos e muco.
+Participa do olfato.
+Protege vias respiratórias.`,
+      `37. Faringe
+Conduz ar e alimento.
+Participa da deglutição.
+Possui função imunológica.
+Conecta várias estruturas.`,
+      `38. Laringe
+Produz a voz.
+Protege vias aéreas.
+Possui cartilagens.
+Controla passagem do ar.`,
+      `39. Traqueia
+Conduz ar aos pulmões.
+Possui anéis cartilaginosos.
+Evita colapso.
+Divide-se em brônquios.`,
+      `40. Pulmões
+Realizam troca gasosa.
+Possuem alvéolos.
+Direito tem 3 lobos.
+Esquerdo tem 2 lobos.`,
+      `41. Pleura
+Membrana que envolve pulmões.
+Possui líquido lubrificante.
+Reduz atrito.
+Importante na respiração.`,
+      `42. Inspiração
+Entrada de ar.
+Diafragma contrai.
+Volume torácico aumenta.
+Pressão diminui.`,
+      `43. Expiração
+Saída de ar.
+Diafragma relaxa.
+Volume diminui.
+Processo passivo.`,
+      `44. Sistema Circulatório
+Transporta sangue.
+Distribui nutrientes.
+Remove resíduos.
+Mantém homeostase.`,
+      `45. Artérias
+Levando sangue do coração.
+Alta pressão.
+Paredes espessas.
+Ricas em elasticidade.`,
+      `46. Veias
+Levando sangue ao coração.
+Baixa pressão.
+Possuem válvulas.
+Funcionam como reservatório.`,
+      `47. Capilares
+Troca de substâncias.
+Muito finos.
+Ligam artérias e veias.
+Permitem difusão.`,
+      `48. Hematopoiese
+Produção de células do sangue.
+Ocorre na medula óssea.
+Gera hemácias e leucócitos.
+Essencial para imunidade.`,
+      `49. Sistema Linfático
+Transporta linfa.
+Defesa do organismo.
+Inclui linfonodos.
+Remove excesso de líquido.`,
+      `50. Homeostase
+Equilíbrio do corpo.
+Mantém funções vitais.
+Controla temperatura e pH.
+Fundamental para sobrevivência.`
+    ]
 
     const pesosMiniConteudosAnatomia = miniConteudosAnatomia.map((conteudo) => ({
       nome: conteudo,
