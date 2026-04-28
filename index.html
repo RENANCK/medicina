@@ -139,6 +139,47 @@
       text-transform: none;
       font-weight: 700;
     }
+    .mini-content.active-reading {
+      background: #ffffff;
+      color: #1d2438;
+      border-radius: 16px;
+      border-left: none;
+      padding: 22px;
+      margin-left: 0;
+      box-shadow: 0 8px 24px rgba(15, 21, 43, 0.15);
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .mini-reading-text {
+      font-size: clamp(21px, 3vw, 33px);
+      line-height: 1.5;
+      white-space: pre-line;
+      font-weight: 700;
+    }
+    .mini-reading-input {
+      width: 100%;
+      border: 2px solid #cfd7eb;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: clamp(16px, 2.3vw, 22px);
+      font-weight: 700;
+    }
+    .mini-reading-btn {
+      align-self: flex-start;
+      background: #515b78;
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 12px 22px;
+      font-size: clamp(15px, 2vw, 20px);
+      font-weight: 900;
+    }
+    .mini-reading-feedback {
+      font-size: clamp(15px, 2.1vw, 20px);
+      font-weight: 800;
+      color: #1d2438;
+    }
 
     .mini-content.open {
       display: block;
@@ -1103,6 +1144,57 @@ A calcitonina reduz o cálcio sanguíneo, enquanto o paratormônio aumenta sua c
       }
     }
 
+    const stopWordsMini = new Set(["de", "do", "da", "e", "o", "a", "em", "um", "uma", "para"]);
+
+    function normalizarResposta(texto) {
+      return (texto || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+    }
+
+    function escolherDuasPalavrasAleatorias(texto) {
+      const regex = /\p{L}+/gu;
+      const palavras = [];
+      let match;
+      while ((match = regex.exec(texto)) !== null) {
+        const palavra = match[0];
+        const normalizada = normalizarResposta(palavra);
+        if (normalizada.length < 4) continue;
+        if (stopWordsMini.has(normalizada)) continue;
+        palavras.push({ palavraOriginal: palavra, palavraNormalizada: normalizada, inicio: match.index, fim: regex.lastIndex });
+      }
+      const unicas = palavras.filter((item, idx, arr) => arr.findIndex((x) => x.palavraNormalizada === item.palavraNormalizada) === idx);
+      const base = unicas.length >= 2 ? unicas : palavras;
+      if (base.length < 2) return null;
+      const primeira = base[Math.floor(Math.random() * base.length)];
+      let segunda = base[Math.floor(Math.random() * base.length)];
+      while (segunda.palavraNormalizada === primeira.palavraNormalizada) {
+        segunda = base[Math.floor(Math.random() * base.length)];
+      }
+      return [primeira, segunda].sort((a, b) => a.inicio - b.inicio);
+    }
+
+    function mascararMiniConteudo(texto, palavrasOcultas) {
+      const partes = [];
+      let cursor = 0;
+      palavrasOcultas.forEach((palavra, idx) => {
+        partes.push(texto.slice(cursor, palavra.inicio));
+        partes.push(`__BLANK_${idx}__`);
+        cursor = palavra.fim;
+      });
+      partes.push(texto.slice(cursor));
+      return partes.join("");
+    }
+
+    function registrarPontoDoDia() {
+      const hoje = new Date().toISOString().slice(0, 10);
+      const chave = `hiperfoco-pontos-${hoje}`;
+      const atual = Number(localStorage.getItem(chave) || "0");
+      localStorage.setItem(chave, String(atual + 1));
+    }
+
     function criarConteudoMiniTarefa(conteudo) {
       const miniDiv = document.createElement("div");
       miniDiv.className = "mini-content";
@@ -1147,6 +1239,82 @@ A calcitonina reduz o cálcio sanguíneo, enquanto o paratormônio aumenta sua c
         return miniDiv;
       }
 
+      if (conteudo.tipo === "mini-conteudo") {
+        miniDiv.classList.add("active-reading");
+        const state = { fase: "leitura", concluiu: false };
+        const texto = document.createElement("p");
+        texto.className = "mini-reading-text";
+        texto.textContent = conteudo.texto || "";
+        const acaoBtn = document.createElement("button");
+        acaoBtn.type = "button";
+        acaoBtn.className = "mini-reading-btn";
+        acaoBtn.textContent = "Li uma vez";
+        const feedback = document.createElement("p");
+        feedback.className = "mini-reading-feedback";
+
+        const renderInputs = (mascarado) => {
+          texto.innerHTML = "";
+          mascarado.split(/(__BLANK_[01]__)/g).forEach((parte) => {
+            if (parte === "__BLANK_0__" || parte === "__BLANK_1__") {
+              const input = document.createElement("input");
+              input.type = "text";
+              input.className = "mini-reading-input";
+              input.placeholder = "Digite a palavra";
+              input.dataset.blank = parte === "__BLANK_0__" ? "0" : "1";
+              texto.appendChild(input);
+            } else if (parte) {
+              texto.appendChild(document.createTextNode(parte));
+            }
+          });
+        };
+
+        acaoBtn.addEventListener("click", () => {
+          if (state.fase === "leitura") {
+            const sorteadas = escolherDuasPalavrasAleatorias(conteudo.texto || "");
+            if (!sorteadas) {
+              feedback.textContent = "Não foi possível ocultar 2 palavras neste texto.";
+              return;
+            }
+            state.ocultas = sorteadas;
+            renderInputs(mascararMiniConteudo(conteudo.texto || "", sorteadas));
+            state.fase = "resposta";
+            acaoBtn.textContent = "Responder";
+            return;
+          }
+
+          if (state.fase === "resposta") {
+            const i0 = texto.querySelector('input[data-blank="0"]');
+            const i1 = texto.querySelector('input[data-blank="1"]');
+            const resposta0 = normalizarResposta(i0?.value);
+            const resposta1 = normalizarResposta(i1?.value);
+            const correto0 = resposta0 === state.ocultas[0].palavraNormalizada;
+            const correto1 = resposta1 === state.ocultas[1].palavraNormalizada;
+            if (correto0 && correto1) {
+              feedback.textContent = "Correto! +1 ponto.";
+              registrarPontoDoDia();
+            } else {
+              feedback.textContent = `Resposta: ${state.ocultas[0].palavraOriginal} | ${state.ocultas[1].palavraOriginal}`;
+            }
+            state.fase = "continuar";
+            acaoBtn.textContent = "Continuar";
+            return;
+          }
+
+          if (state.fase === "continuar") {
+            if (!state.concluiu) {
+              state.concluiu = true;
+            }
+            feedback.textContent = "Conteúdo concluído.";
+            acaoBtn.disabled = true;
+          }
+        });
+
+        miniDiv.appendChild(texto);
+        miniDiv.appendChild(acaoBtn);
+        miniDiv.appendChild(feedback);
+        return miniDiv;
+      }
+
       miniDiv.textContent = conteudo.texto || "";
       return miniDiv;
     }
@@ -1162,14 +1330,14 @@ A calcitonina reduz o cálcio sanguíneo, enquanto o paratormônio aumenta sua c
         const miniConteudo = (() => {
           if (tarefa === "Mini-conteúdo Anatomia") {
             return {
-              tipo: "texto",
+              tipo: "mini-conteudo",
               texto: sortearComPeso(pesosMiniConteudosAnatomia)
             };
           }
 
           if (tarefa === "Mini-conteúdo CHG") {
             return {
-              tipo: "texto",
+              tipo: "mini-conteudo",
               texto: sortearComPeso(pesosMiniConteudosCHG)
             };
           }
