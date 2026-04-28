@@ -74,6 +74,12 @@
       text-align: left;
     }
 
+    .task-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     .task {
       display: flex;
       align-items: center;
@@ -103,6 +109,38 @@
       display: flex;
       align-items: center;
       gap: 14px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .menu-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #ff8c22;
+      color: white;
+      font-size: 22px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .task-title {
+      overflow-wrap: anywhere;
+    }
+
+    .mini-content {
+      display: none;
+      margin-left: 52px;
+      border-left: 3px solid #ffb21c;
+      padding-left: 14px;
+      font-size: clamp(14px, 2vw, 20px);
+      line-height: 1.45;
+      text-transform: none;
+      font-weight: 700;
+    }
+
+    .mini-content.open {
+      display: block;
     }
 
     .finish-btn {
@@ -304,23 +342,53 @@
 
       for (let i = 0; i < quantidade; i++) {
         const tarefa = sortearComPeso(pesosTarefas);
-        const textoTarefa =
+        const miniConteudo =
           tarefa === "Mini-conteúdo Anatomia"
-            ? `Mini Anatomia: ${sortearComPeso(pesosMiniConteudosAnatomia)}`
-            : tarefa;
+            ? sortearComPeso(pesosMiniConteudosAnatomia)
+            : "";
+
+        const item = document.createElement("div");
+        item.className = "task-item";
 
         const div = document.createElement("div");
         div.className = "task";
 
         div.innerHTML = `
-          <label class="task-left">
-            <input type="checkbox" class="check" />
-            <span>${textoTarefa}</span>
-          </label>
+          <div class="task-left">
+            <button type="button" class="menu-toggle" aria-label="Abrir mini conteúdo">+</button>
+            <label class="task-left">
+              <input type="checkbox" class="check" />
+              <span class="task-title">${tarefa}</span>
+            </label>
+          </div>
           <div class="task-dot"></div>
         `;
 
-        tasksContainer.appendChild(div);
+        const miniDiv = document.createElement("div");
+        miniDiv.className = "mini-content";
+        miniDiv.textContent = miniConteudo;
+
+        const toggleBtn = div.querySelector(".menu-toggle");
+
+        if (miniConteudo) {
+          toggleBtn.addEventListener("click", () => {
+            miniDiv.classList.toggle("open");
+            const aberto = miniDiv.classList.contains("open");
+            toggleBtn.textContent = aberto ? "−" : "+";
+            toggleBtn.setAttribute(
+              "aria-label",
+              aberto ? "Fechar mini conteúdo" : "Abrir mini conteúdo"
+            );
+          });
+        } else {
+          toggleBtn.disabled = true;
+          toggleBtn.style.opacity = "0.5";
+          toggleBtn.style.cursor = "not-allowed";
+        }
+
+        item.appendChild(div);
+        item.appendChild(miniDiv);
+        tasksContainer.appendChild(item);
       }
 
       document.getElementById("startScreen").style.display = "none";
