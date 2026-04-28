@@ -133,6 +133,7 @@
       margin-left: 52px;
       border-left: 3px solid #ffb21c;
       padding-left: 14px;
+      white-space: pre-line;
       font-size: clamp(14px, 2vw, 20px);
       line-height: 1.45;
       text-transform: none;
@@ -437,10 +438,20 @@
 
       for (let i = 0; i < quantidade; i++) {
         const tarefa = sortearComPeso(pesosTarefas);
-        const miniConteudo =
-          tarefa === "Mini-conteúdo Anatomia"
-            ? sortearComPeso(pesosMiniConteudosAnatomia)
-            : "";
+        const miniConteudo = (() => {
+          if (tarefa === "Mini-conteúdo Anatomia") {
+            return sortearComPeso(pesosMiniConteudosAnatomia);
+          }
+
+          if (tarefa === "Flashcard Anatomia") {
+            const flashcard = flashcardsAnatomia[
+              Math.floor(Math.random() * flashcardsAnatomia.length)
+            ];
+            return `Frente: ${flashcard.frente}\nVerso: ${flashcard.verso}`;
+          }
+
+          return "";
+        })();
 
         const item = document.createElement("div");
         item.className = "task-item";
@@ -450,7 +461,7 @@
 
         div.innerHTML = `
           <div class="task-left">
-            <button type="button" class="menu-toggle" aria-label="Abrir mini conteúdo">+</button>
+            <button type="button" class="menu-toggle" aria-label="Abrir conteúdo">+</button>
             <label class="task-left">
               <input type="checkbox" class="check" />
               <span class="task-title">${tarefa}</span>
@@ -472,7 +483,7 @@
             toggleBtn.textContent = aberto ? "−" : "+";
             toggleBtn.setAttribute(
               "aria-label",
-              aberto ? "Fechar mini conteúdo" : "Abrir mini conteúdo"
+              aberto ? "Fechar conteúdo" : "Abrir conteúdo"
             );
           });
         } else {
