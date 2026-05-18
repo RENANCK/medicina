@@ -397,7 +397,7 @@
     const pesosTarefas = [
       { nome: "Flashcard Anatomia", peso: 40 },
       { nome: "Flashcard CHG", peso: 30 },
-      { nome: "Caso estilo House", peso: 12 },
+      { nome: "Caso estilo House", peso: 0.01 },
       { nome: "Mini-conteúdo Anatomia", peso: 10 },
       { nome: "Mini-conteúdo CHG", peso: 8 }
     ];
@@ -1445,29 +1445,7 @@ A calcitonina reduz o cálcio sanguíneo, enquanto o paratormônio aumenta sua c
         enunciado.className = "house-case-title";
         enunciado.textContent = conteudo.caso;
 
-        const opcoes = document.createElement("div");
-        opcoes.className = "house-case-options";
-
-        const botoes = conteudo.alternativas.map((alternativa) => {
-          const botao = document.createElement("button");
-          botao.type = "button";
-          botao.className = "house-case-option";
-          botao.textContent = alternativa;
-
-          botao.addEventListener("click", () => {
-            const acertou = alternativa === conteudo.resposta;
-            botao.classList.add(acertou ? "correct" : "wrong");
-            botoes.forEach((item) => {
-              item.disabled = true;
-            });
-          });
-
-          opcoes.appendChild(botao);
-          return botao;
-        });
-
         card.appendChild(enunciado);
-        card.appendChild(opcoes);
         miniDiv.appendChild(card);
         return miniDiv;
       }
@@ -1528,9 +1506,7 @@ A calcitonina reduz o cálcio sanguíneo, enquanto o paratormônio aumenta sua c
             ];
             return {
               tipo: "house-case",
-              caso: caso.caso,
-              alternativas: caso.alternativas,
-              resposta: caso.resposta
+              caso: caso.caso
             };
           }
 
