@@ -1703,13 +1703,14 @@ A calcitonina reduz o cálcio sanguíneo, enquanto o paratormônio aumenta sua c
           botao.type = "button";
           botao.className = "house-case-option";
           botao.textContent = alternativa;
+          botao.dataset.opcao = alternativa.charAt(0);
 
           botao.addEventListener("click", () => {
             const acertou = alternativa === conteudo.resposta;
             botao.classList.add(acertou ? "correct" : "wrong");
             if (!acertou) {
               botoes.forEach((item) => {
-                if (item.textContent.startsWith(`${conteudo.resposta})`)) {
+                if (item.dataset.opcao === conteudo.resposta) {
                   item.classList.add("correct");
                 }
               });
