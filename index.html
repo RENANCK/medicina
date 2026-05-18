@@ -227,6 +227,48 @@
       font-size: clamp(15px, 2vw, 20px);
       font-weight: 900;
     }
+    .house-case-content {
+      background: #ffffff;
+      color: #1d2438;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(15, 21, 43, 0.18);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: left;
+    }
+    .house-case-title {
+      font-size: clamp(24px, 3.4vw, 38px);
+      font-weight: 900;
+      line-height: 1.25;
+    }
+    .house-case-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .house-case-option {
+      width: 100%;
+      text-align: left;
+      background: #eef2ff;
+      color: #1d2438;
+      border: 2px solid #cfd7eb;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: clamp(17px, 2.4vw, 25px);
+      font-weight: 800;
+    }
+    .house-case-option.correct {
+      background: #2bb673;
+      border-color: #1f935b;
+      color: #ffffff;
+    }
+    .house-case-option.wrong {
+      background: #d84040;
+      border-color: #aa2f2f;
+      color: #ffffff;
+    }
 
     .finish-btn {
       display: none;
@@ -1395,6 +1437,41 @@ A calcitonina reduz o cálcio sanguíneo, enquanto o paratormônio aumenta sua c
         return miniDiv;
       }
 
+      if (conteudo.tipo === "house-case") {
+        const card = document.createElement("article");
+        card.className = "house-case-content";
+
+        const enunciado = document.createElement("p");
+        enunciado.className = "house-case-title";
+        enunciado.textContent = conteudo.caso;
+
+        const opcoes = document.createElement("div");
+        opcoes.className = "house-case-options";
+
+        const botoes = conteudo.alternativas.map((alternativa) => {
+          const botao = document.createElement("button");
+          botao.type = "button";
+          botao.className = "house-case-option";
+          botao.textContent = alternativa;
+
+          botao.addEventListener("click", () => {
+            const acertou = alternativa === conteudo.resposta;
+            botao.classList.add(acertou ? "correct" : "wrong");
+            botoes.forEach((item) => {
+              item.disabled = true;
+            });
+          });
+
+          opcoes.appendChild(botao);
+          return botao;
+        });
+
+        card.appendChild(enunciado);
+        card.appendChild(opcoes);
+        miniDiv.appendChild(card);
+        return miniDiv;
+      }
+
       miniDiv.textContent = conteudo.texto || "";
       return miniDiv;
     }
@@ -1450,8 +1527,10 @@ A calcitonina reduz o cálcio sanguíneo, enquanto o paratormônio aumenta sua c
               Math.floor(Math.random() * casosEstiloHouse.length)
             ];
             return {
-              tipo: "texto",
-              texto: `${caso.caso}\n${caso.alternativas.join("\n")}\nResposta: ${caso.resposta}`
+              tipo: "house-case",
+              caso: caso.caso,
+              alternativas: caso.alternativas,
+              resposta: caso.resposta
             };
           }
 
